@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:title="Notification Preferences">
+
+        <CheckBoxPreference
+            android:key="notification_onoff_preference"
+            android:title="Notifications On/Off"/>
+
+        <EditTextPreference
+            android:key="notify_period_preference"
+            android:title="# Days between notifs"
+            android:dependency="notification_onoff_preference"/>
+
+        <EditTextPreference
+            android:key="notify_time_preference"
+            android:title="Time of Day for Notif"
+            android:dependency="notification_onoff_preference"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Email Preferences">
+
+        <CheckBoxPreference
+            android:key="email_onoff_preference"
+            android:title="Email Notifications On/Off"
+            android:dependency="notification_onoff_preference"/>
+
+        <EditTextPreference
+            android:key="email_address_preference"
+            android:title="Email Address"
+            android:dependency="email_onoff_preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
