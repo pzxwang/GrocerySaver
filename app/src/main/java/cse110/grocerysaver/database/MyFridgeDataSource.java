@@ -27,9 +27,7 @@ public class MyFridgeDataSource {
 
     public void insertRow(String name, String notes, int addDate, int expDate, String itemId) {
         ContentValues values = new ContentValues();
-
-        System.out.println("item to add: " + itemId);
-
+        
         values.put(MyFridgeHelper.COLUMN_NAME, name);
         values.put(MyFridgeHelper.COLUMN_NOTES, notes);
         values.put(MyFridgeHelper.COLUMN_ADD, addDate);
@@ -57,9 +55,7 @@ public class MyFridgeDataSource {
     public void deleteItem(String itemId) {
         String whereClause = "_ID=?";
         String[] whereArgs = new String[] {itemId};
-        System.out.println("id to delete: " + itemId);
         int del = mDatabase.delete(MyFridgeHelper.TABLE_MYFRIDGE, whereClause, whereArgs);
-        System.out.println("delete returned: " + del);
     }
     public void deleteAll() {
         mDatabase.delete(

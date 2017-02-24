@@ -60,12 +60,9 @@ public class MyFridgeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SparseBooleanArray checkedItems = myFridgeList.getCheckedItemPositions();
-                // get list of all items to delete so we don't mess with
-                //List<String> deleteIds = new ArrayList<String>();
-                System.out.println("num items: " + myFridgeList.getCount());
+
                 for (int i = myFridgeList.getCount()-1; i >= 0; i--) {
                     if (checkedItems.valueAt(i) == true) {
-                        System.out.println("food name is: " + foodList.get(i).getFoodName());
                         removeItemFromDb(foodList.get(i).getID());
                         foodList.remove(foodList.get(i));
                     }
@@ -85,14 +82,13 @@ public class MyFridgeFragment extends Fragment {
         cursor.moveToFirst();
         while( !cursor.isAfterLast() ) {
             int namePos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NAME);
-            //int idPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_ID);
-            //int notesPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NOTES);
+            int idPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_ID);
+            int notesPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NOTES);
 
             // TODO: add in dates for add/exp
-            //FoodItem toFetch = new FoodItem(getString(namePos), getString(idPos), getString(notesPos), 0, 0);
-            //foodList.add(toFetch);
-
-            foodList.add(new FoodItem(cursor.getString(namePos)));
+            FoodItem toFetch = new FoodItem(cursor.getString(namePos), cursor.getString(idPos),
+                    cursor.getString(notesPos), 0, 0);
+            foodList.add(toFetch);
 
             cursor.moveToNext();
         }
