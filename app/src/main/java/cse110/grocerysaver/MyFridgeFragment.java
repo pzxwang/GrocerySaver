@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,20 +26,24 @@ import cse110.grocerysaver.database.MyFridgeHelper;
 public class MyFridgeFragment extends Fragment {
 
     protected MyFridgeDataSource dataBase;
-    private Button delBtn;
     private CustomListViewRowAdapter customAdapter;
     private ListView myFridgeList;
     private List<FoodItem> foodList;
-    private Button addBtn;
     private EditText newItemName;
     private EditText newItemNotes;
     private EditText newItemExpDate;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_my_fridge,container,false);
-        delBtn = (Button) view.findViewById(R.id.deleteButton);
         dataBase = new MyFridgeDataSource(getActivity());
         foodList = new ArrayList<>();
 
@@ -45,20 +52,29 @@ public class MyFridgeFragment extends Fragment {
         fetchMyFridge(view);
         myFridgeList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        // Creates an input menu on clicking add button that stores in MyFridge database
-        addBtn = (Button) view.findViewById(R.id.addButton);
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final View view = (LayoutInflater.from(getActivity())).inflate(R.layout.user_input, null);
-                addNewItemScreen(view);
-            }
-        });
+        return view;
+    }
 
-        // listener to delete items
-        delBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getActivity().setTitle(R.string.my_fridge);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.my_fridge, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_my_fridge_add:
+                View view = (LayoutInflater.from(getActivity())).inflate(R.layout.user_input, null);
+                addNewItemScreen(view);
+                return true;
+            case R.id.menu_my_fridge_remove:
                 SparseBooleanArray checkedItems = myFridgeList.getCheckedItemPositions();
 
                 for (int i = myFridgeList.getCount()-1; i >= 0; i--) {
@@ -69,11 +85,9 @@ public class MyFridgeFragment extends Fragment {
                 }
                 unSelectItems();
                 customAdapter.notifyDataSetChanged();
-            }
-
-
-        });
-        return view;
+                return true;
+        }
+        return false;
     }
 
     public void fetchMyFridge(View view) {
@@ -115,6 +129,7 @@ public class MyFridgeFragment extends Fragment {
         dataBase.deleteItem(itemId);
         dataBase.close();
     }
+
     public void addNewItemScreen(View view) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
         alertBuilder.setView(view);

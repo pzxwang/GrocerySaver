@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_fridge"
-        android:title="My Fridge"
+        android:title="@string/my_fridge"
         android:icon="@android:drawable/sym_def_app_icon" />
     <item
         android:id="@+id/menu_favorites"
-        android:title="Favorites"
+        android:title="@string/favorites"
         android:icon="@android:drawable/btn_star_big_on" />
 
     <item
         android:id="@+id/menu_settings"
-        android:title="Settings"
+        android:title="@string/settings"
         android:icon="@android:drawable/ic_menu_preferences" />
 </menu>
