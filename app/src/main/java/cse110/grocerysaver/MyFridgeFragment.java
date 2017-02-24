@@ -3,6 +3,7 @@ package cse110.grocerysaver;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -23,7 +23,12 @@ import java.util.List;
 import cse110.grocerysaver.database.MyFridgeDataSource;
 import cse110.grocerysaver.database.MyFridgeHelper;
 
+import static android.app.Activity.RESULT_OK;
+
 public class MyFridgeFragment extends Fragment {
+
+    /* Request code */
+    static final int NEW_FOOD_ITEM = 1;
 
     protected MyFridgeDataSource dataBase;
     private CustomListViewRowAdapter customAdapter;
@@ -71,8 +76,7 @@ public class MyFridgeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_my_fridge_add:
-                View view = (LayoutInflater.from(getActivity())).inflate(R.layout.user_input, null);
-                addNewItemScreen(view);
+                addFood();
                 return true;
             case R.id.menu_my_fridge_remove:
                 SparseBooleanArray checkedItems = myFridgeList.getCheckedItemPositions();
@@ -88,6 +92,29 @@ public class MyFridgeFragment extends Fragment {
                 return true;
         }
         return false;
+    }
+
+    private void addFood() {
+        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+        startActivityForResult(intent, NEW_FOOD_ITEM);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == NEW_FOOD_ITEM) {
+            if (resultCode == RESULT_OK) {
+                dataBase.open();
+                String foodName = data.getStringExtra("foodName");
+                String foodExpDate = data.getStringExtra("foodExpDate");
+                String foodNotes = data.getStringExtra("foodNotes");
+
+                FoodItem foodItem = new FoodItem(foodName);
+                foodList.add(foodItem);
+
+                dataBase.insertRow(foodName, foodNotes, 5, 666, foodItem.getID());
+                dataBase.close();
+            }
+        }
     }
 
     public void fetchMyFridge(View view) {
@@ -111,43 +138,10 @@ public class MyFridgeFragment extends Fragment {
         myFridgeList.setAdapter(customAdapter);
     }
 
-    public void storeNewItemInDb() {
-        dataBase.open();
-        String food_name = newItemName.getText().toString();
-        FoodItem addItem = new FoodItem(food_name);
-        foodList.add(addItem);
-        String itemId = addItem.getID();
-        String food_eDate = newItemExpDate.getText().toString();
-        Integer v1 = Integer.parseInt(food_eDate);
-        String food_notes = newItemNotes.getText().toString();
-        dataBase.insertRow(food_name, food_notes, 5, v1, itemId);
-        dataBase.close();
-    }
-
     public void removeItemFromDb(String itemId) {
         dataBase.open();
         dataBase.deleteItem(itemId);
         dataBase.close();
-    }
-
-    public void addNewItemScreen(View view) {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
-        alertBuilder.setView(view);
-        newItemName = (EditText) view.findViewById(R.id.nameInput);
-        newItemNotes = (EditText) view.findViewById(R.id.notesInput);
-        newItemExpDate = (EditText) view.findViewById(R.id.expInput);
-
-        alertBuilder.setCancelable(true)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        storeNewItemInDb();
-                        customAdapter.notifyDataSetChanged();
-                    }
-                });
-
-        Dialog dialog = alertBuilder.create();
-        dialog.show();
     }
 
     //unset any checked items after any action is performed

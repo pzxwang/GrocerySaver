@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-class CustomListViewRowAdapter extends ArrayAdapter<FoodItem> {
+public class CustomListViewRowAdapter extends ArrayAdapter<FoodItem> {
 
     //ViewHolder holder;
 

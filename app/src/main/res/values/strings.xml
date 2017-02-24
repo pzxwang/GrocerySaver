@@ -4,4 +4,6 @@
     <string name="my_fridge">My Fridge</string>
     <string name="favorites">Favorites</string>
     <string name="settings">Settings</string>
+
+    <string name="add_food_activity_title">Add food</string>
 </resources>

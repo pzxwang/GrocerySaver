@@ -15,6 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddFoodActivity"
+            android:label="@string/add_food_activity_title"
+            android:parentActivityName=".GrocerySaverMain" />
     </application>
 
 </manifest>
