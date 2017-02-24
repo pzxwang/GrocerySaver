@@ -10,71 +10,105 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-public class GrocerySaverMain extends AppCompatActivity {
+import java.util.LinkedList;
+
+public class GrocerySaverMain extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    private enum MainFragment {
+        MyFridgeFragment, FavoritesFragment, SettingsFragment
+    }
+
+    public MyFridgeFragment myFridgeFragment;
+    public FavoritesFragment favoritesFragment;
+    public PreferencesFragment settingsFragment;
+    BottomNavigationView navigationView;
+
+    private LinkedList<MainFragment> fragmentBackStack = new LinkedList<MainFragment>();
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == fragmentBackStack.peek().ordinal()) {
+            return false;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.menu_fridge:
+                pushFragment(MainFragment.MyFridgeFragment);
+                break;
+            case R.id.menu_favorites:
+                pushFragment(MainFragment.FavoritesFragment);
+                break;
+            case R.id.menu_settings:
+                pushFragment(MainFragment.SettingsFragment);
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentBackStack.size() == 1) {
+            super.onBackPressed();
+            return;
+        }
+
+        popFragment();
+    }
+
+    private void changeFragment(MainFragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.rootLayout, fragment(fragment));
+        transaction.commit();
+
+        navigationView.getMenu().getItem(fragment.ordinal()).setChecked(true);
+    }
+
+    private void pushFragment(MainFragment fragment) {
+        if (fragmentBackStack.contains(fragment)) {
+            fragmentBackStack.remove(fragment);
+        }
+
+        fragmentBackStack.push(fragment);
+        changeFragment(fragment);
+    }
+
+    private void popFragment() {
+        fragmentBackStack.pop();
+        changeFragment(fragmentBackStack.peek());
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_saver_main);
 
-        setupNavigationView();
+        navigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        navigationView.setOnNavigationItemSelectedListener(this);
+
+        pushFragment(MainFragment.MyFridgeFragment);
     }
 
-    private void setupNavigationView () {
-        BottomNavigationView bottomNav = (BottomNavigationView) findViewById(R.id.navigation);
-
-        if (bottomNav != null) {
-
-            // get the list of menu items in bottom bar and display MyFridge(first option)
-            Menu menu = bottomNav.getMenu();
-            selectFragment(menu.getItem(0));
-
-            // Switch fragments when other options are selected.
-            bottomNav.setOnNavigationItemSelectedListener(
-                    new BottomNavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                            selectFragment(item);
-                            return false;
-                        }
-                    });
-        }
-    }
-
-    // choose the appropriate fragment based on the selected page
-    private void selectFragment(MenuItem item) {
-
-        item.setChecked(true);
-
-        // find the correct fragment
-        switch(item.getItemId()) {
-            case R.id.menu_fridge:
-                showFragment(new MyFridgeFragment());
-                break;
-            case R.id.menu_favorites:
-                showFragment(new FavoritesFragment());
-                break;
-            case R.id.menu_settings:
-                showFragment(new PreferencesFragment());
-                break;
-        }
-    }
-
-    // method to display the selected page on bottom navigation
-    protected void showFragment(Fragment frag) {
-
-        if (frag != null) {
-
-            FragmentManager fragManager = getSupportFragmentManager();
-            if (fragManager != null) {
-
-                FragmentTransaction fragTransaction = fragManager.beginTransaction();
-                if (fragTransaction != null) {
-                    fragTransaction.replace(R.id.rootLayout, frag);
-                    fragTransaction.commit();
+    @NonNull
+    private Fragment fragment(MainFragment fragment) {
+        switch (fragment) {
+            case FavoritesFragment:
+                if (favoritesFragment == null) {
+                    favoritesFragment = new FavoritesFragment();
                 }
-
-            }
+                return favoritesFragment;
+            case SettingsFragment:
+                if (settingsFragment == null) {
+                    settingsFragment = new PreferencesFragment();
+                }
+                return settingsFragment;
+            default:
+                if (myFridgeFragment == null) {
+                    myFridgeFragment = new MyFridgeFragment();
+                }
+                return myFridgeFragment;
         }
     }
+
 }
