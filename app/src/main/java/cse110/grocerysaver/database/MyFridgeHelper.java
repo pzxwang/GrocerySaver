@@ -12,7 +12,7 @@ public class MyFridgeHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_ID";
     public static final String COLUMN_NAME = "NAME";
     public static final String COLUMN_NOTES = "NOTES";
-    public static final String COLUMN_ADD = "ADDED_DATE";
+    public static final String COLUMN_ADDDATE = "ADDED_DATE";
     public static final String COLUMN_EXPDATE = "EXP_DATE";
 
     private static final String DB_NAME = "myfridge.db";
@@ -27,10 +27,10 @@ public class MyFridgeHelper extends SQLiteOpenHelper {
     private static final String DB_CREATE =
             "CREATE TABLE " + TABLE_MYFRIDGE + " (" +
                     COLUMN_ID + " TEXT, " +
-                    COLUMN_NAME+ " REAL, " +
+                    COLUMN_NAME+ " TEXT, " +
                     COLUMN_NOTES + " TEXT, " +
-                    COLUMN_ADD + " REAL, " +
-                    COLUMN_EXPDATE + " REAL);";
+                    COLUMN_ADDDATE + " LONG, " +
+                    COLUMN_EXPDATE + " LONG);";
 
     public MyFridgeHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

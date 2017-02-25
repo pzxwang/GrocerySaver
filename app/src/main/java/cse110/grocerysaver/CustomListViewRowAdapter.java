@@ -11,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomListViewRowAdapter extends ArrayAdapter<FoodItem> {
 
@@ -34,6 +37,10 @@ public class CustomListViewRowAdapter extends ArrayAdapter<FoodItem> {
 
         TextView customRowNameText = (TextView) v.findViewById(R.id.foodItemName);
         customRowNameText.setText(foodItem.getFoodName());
+
+        TextView customRowExpDateText = (TextView) v.findViewById(R.id.expDateListLayout);
+        customRowExpDateText.setText(new SimpleDateFormat("MM / dd / yyyy", Locale.US)
+                                        .format(new Date(foodItem.getExpirationDate())));
 
         ImageView customRowImage = (ImageView) v.findViewById(R.id.foodImage);
 

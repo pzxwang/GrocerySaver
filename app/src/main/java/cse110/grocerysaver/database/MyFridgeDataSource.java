@@ -25,12 +25,12 @@ public class MyFridgeDataSource {
         mDatabase.close();
     }
 
-    public void insertRow(String name, String notes, int addDate, int expDate, String itemId) {
+    public void insertRow(String name, String notes, long addDate, long expDate, String itemId) {
         ContentValues values = new ContentValues();
         
         values.put(MyFridgeHelper.COLUMN_NAME, name);
         values.put(MyFridgeHelper.COLUMN_NOTES, notes);
-        values.put(MyFridgeHelper.COLUMN_ADD, addDate);
+        values.put(MyFridgeHelper.COLUMN_ADDDATE, addDate);
         values.put(MyFridgeHelper.COLUMN_EXPDATE, expDate);
         values.put(MyFridgeHelper.COLUMN_ID, itemId);
 
@@ -41,13 +41,13 @@ public class MyFridgeDataSource {
         Cursor cursor = mDatabase.query(
                 MyFridgeHelper.TABLE_MYFRIDGE,
                 new String[] {MyFridgeHelper.COLUMN_ID, MyFridgeHelper.COLUMN_NAME,
-                        MyFridgeHelper.COLUMN_NOTES, MyFridgeHelper.COLUMN_ADD,
+                        MyFridgeHelper.COLUMN_NOTES, MyFridgeHelper.COLUMN_ADDDATE,
                         MyFridgeHelper.COLUMN_EXPDATE},
                 null,
                 null,
                 null,
                 null,
-                null
+                MyFridgeHelper.COLUMN_EXPDATE   // orderBy column
         );
         return cursor;
     }
