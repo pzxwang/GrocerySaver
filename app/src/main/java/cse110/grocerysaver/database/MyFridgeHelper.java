@@ -29,8 +29,8 @@ public class MyFridgeHelper extends SQLiteOpenHelper {
                     COLUMN_ID + " TEXT, " +
                     COLUMN_NAME+ " REAL, " +
                     COLUMN_NOTES + " TEXT, " +
-                    COLUMN_ADD + " REAL, " +
-                    COLUMN_EXPDATE + " REAL);";
+                    COLUMN_ADD + " LONG, " +
+                    COLUMN_EXPDATE + " LONG);";
 
     public MyFridgeHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

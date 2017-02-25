@@ -9,8 +9,8 @@ public class FoodItem {
     private String ID;
     private String foodName;
     private Image foodImage;
-    private Date addingDate;
-    private String expirationDate;
+    private long addingDate;
+    private long expirationDate;
     private String notes = "";
     private Boolean isInFavorite;
     private Boolean isExpired;
@@ -21,11 +21,12 @@ public class FoodItem {
     //default constructor
     public FoodItem() {
         this.ID = UUID.randomUUID().toString();
-        this.addingDate = c.getTime();
+        //this.addingDate = c.getTime();
+        this.addingDate = System.currentTimeMillis();
     }
 
     //copy constructor for fetchMyFridge
-    public FoodItem(String name, String id, String notes, int addDate, int expDate) {
+    public FoodItem(String name, String id, String notes, long addDate, long expDate) {
         this.foodName = name;
         this.ID = id;
         this.notes = notes;
@@ -36,22 +37,26 @@ public class FoodItem {
     //constructor without an expiration date
     public FoodItem(String foodName) {
         this.ID = UUID.randomUUID().toString();
-        this.addingDate = c.getTime();
+        //this.addingDate = c.getTime();
+        this.addingDate = System.currentTimeMillis();
         this.foodName = foodName;
     }
 
-    //constructor with an expiration date
-    public FoodItem(String foodName, String expirationDate) {
+    //constructor with an expiration date and notes
+    public FoodItem(String foodName, long expirationDate, String notes) {
         this.ID = UUID.randomUUID().toString();
-        this.addingDate = c.getTime();
+        //this.addingDate = c.getTime();
+        this.addingDate = System.currentTimeMillis();
         this.foodName = foodName;
         this.expirationDate = expirationDate;
+        this.notes = notes;
     }
 
     //constructor with name, image, and expiration date
-    public FoodItem(String foodName, Image foodImage, String expirationDate) {
+    public FoodItem(String foodName, Image foodImage, long expirationDate) {
         this.ID = UUID.randomUUID().toString();
-        this.addingDate = c.getTime();
+        //this.addingDate = c.getTime();
+        this.addingDate = System.currentTimeMillis();
         this.foodName = foodName;
         this.foodImage = foodImage;
         this.expirationDate = expirationDate;
@@ -66,7 +71,7 @@ public class FoodItem {
         this.foodImage = foodImage;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(long expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -92,11 +97,11 @@ public class FoodItem {
         return foodImage;
     }
 
-    public Date getAddingDate() {
+    public long getAddingDate() {
         return addingDate;
     }
 
-    public String getExpirationDate() {
+    public long getExpirationDate() {
         return expirationDate;
     }
 

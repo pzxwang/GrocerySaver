@@ -105,13 +105,15 @@ public class MyFridgeFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 dataBase.open();
                 String foodName = data.getStringExtra("foodName");
-                String foodExpDate = data.getStringExtra("foodExpDate");
+                long foodExpDate = data.getLongExtra("foodExpDate", 0);
+                //long foodExpDate = Long.valueOf(data.getStringExtra("foodExpDate"));
                 String foodNotes = data.getStringExtra("foodNotes");
 
-                FoodItem foodItem = new FoodItem(foodName);
+                FoodItem foodItem = new FoodItem(foodName,foodExpDate,foodNotes);
                 foodList.add(foodItem);
 
-                dataBase.insertRow(foodName, foodNotes, 5, 666, foodItem.getID());
+                dataBase.insertRow(foodName, foodNotes, foodItem.getAddingDate(),
+                        foodExpDate, foodItem.getID());
                 dataBase.close();
             }
         }
@@ -125,10 +127,13 @@ public class MyFridgeFragment extends Fragment {
             int namePos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NAME);
             int idPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_ID);
             int notesPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NOTES);
+            int addDatePos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_ADD);
+            int expDatePos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_EXPDATE);
 
             // TODO: add in dates for add/exp
             FoodItem toFetch = new FoodItem(cursor.getString(namePos), cursor.getString(idPos),
-                    cursor.getString(notesPos), 0, 0);
+                    cursor.getString(notesPos), cursor.getLong(addDatePos),
+                    cursor.getLong(expDatePos));
             foodList.add(toFetch);
 
             cursor.moveToNext();

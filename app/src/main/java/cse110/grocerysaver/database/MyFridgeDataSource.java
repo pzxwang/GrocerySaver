@@ -25,7 +25,7 @@ public class MyFridgeDataSource {
         mDatabase.close();
     }
 
-    public void insertRow(String name, String notes, int addDate, int expDate, String itemId) {
+    public void insertRow(String name, String notes, long addDate, long expDate, String itemId) {
         ContentValues values = new ContentValues();
         
         values.put(MyFridgeHelper.COLUMN_NAME, name);

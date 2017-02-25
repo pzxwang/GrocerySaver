@@ -11,6 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class AddFoodActivity extends AppCompatActivity {
 
     private EditText nameFld;
@@ -40,8 +45,18 @@ public class AddFoodActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_add_food_done:
                 Intent intent = new Intent();
+
+                long expDate;
+                try {
+                    expDate = new SimpleDateFormat("MM / dd / yyyy", Locale.US)
+                            .parse(expDateFld.getText().toString()).getTime();
+                }
+                catch ( ParseException e) {
+                    expDate = 0;
+                }
+
                 intent.putExtra("foodName", nameFld.getText().toString());
-                intent.putExtra("foodExpDate", expDateFld.getText().toString());
+                intent.putExtra("foodExpDate", expDate);
                 intent.putExtra("foodNotes", notesFld.getText().toString());
                 setResult(RESULT_OK, intent);
                 finish();
