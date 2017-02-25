@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private static final String SQL_CREATE_TABLE_FRIDGE_ITEM =
-            "CREATE TABLE" + FridgeItem.TABLE + " (" +
+            "CREATE TABLE " + FridgeItem.TABLE + " (" +
                     FridgeItem._ID + " INTEGER PRIMARY KEY," +
                     FridgeItem.COLUMN_NAME + " TEXT," +
                     FridgeItem.COLUMN_DATE_ADDED + " INTEGER," +
@@ -26,13 +26,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     FridgeItem.COLUMN_NOTES + " TEXT)";
 
     private static final String SQL_CREATE_TABLE_FOOD_ITEM =
-            "CREATE TABLE" + FoodItem.TABLE + " (" +
+            "CREATE TABLE " + FoodItem.TABLE + " (" +
                     FoodItem._ID + " INTEGER PRIMARY KEY," +
                     FoodItem.COLUMN_NAME + " TEXT," +
                     FoodItem.COLUMN_SHELF_LIFE + " INTEGER)";
 
     private static final String SQL_CREATE_TABLE_FAVORITE =
-            "CREATE TABLE" + Favorite.TABLE + " (" +
+            "CREATE TABLE " + Favorite.TABLE + " (" +
                     Favorite._ID + " INTEGER PRIMARY KEY," +
                     Favorite.COLUMN_NAME + " TEXT," +
                     Favorite.COLUMN_SHELF_LIFE + " INTEGER," +
