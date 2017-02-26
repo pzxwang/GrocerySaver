@@ -8,12 +8,28 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by Philip on 2/24/17.
+ *
+ * This class is used for interacting with the database. Do not directly create an instance of this
+ * class. It is registered as a content provider and Android automatically manages it for us.
+ * It knows when to open and close the database efficiently.
+ *
+ * To indirectly interact with this class, from an activity use getContentResolver().
+ *
+ * Suppose you want to insert an item to the foodItem table:
+ *
+ *      ContentValues values = new ContentValues();
+ *      values.put(FoodItem.COLUMN_NAME, "Apple");
+ *      values.put(FoodItem.SHELF_LIFE, 26280000);
+ *      getContentResolver().insert(ProviderContract.uriForTable(FoodItem.TABLE), values));
+ *
+ * See class DatabaseContract for all the database schema constant definitions.
  */
 
-public class Provider extends ContentProvider {
+public class DataProvider extends ContentProvider {
     static private final int FRIDGE_ITEM = 1;
     static private final int FAVORITE = 2;
     static private final int FOOD_ITEM = 3;
@@ -33,7 +49,6 @@ public class Provider extends ContentProvider {
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FridgeItem.TABLE + "/#", FRIDGE_ITEM_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.Favorite.TABLE + "/#", FAVORITE_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FoodItem.TABLE + "/#", FOOD_ITEM_ID);
-
     }
 
     private DatabaseHelper dbHelper;

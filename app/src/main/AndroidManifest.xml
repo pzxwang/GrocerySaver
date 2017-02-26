@@ -11,7 +11,7 @@
         
         <provider
             android:authorities="com.cse110.GrocerySaver.provider"
-            android:name=".database.Provider" />
+            android:name=".database.DataProvider" />
         
         <activity android:name=".GrocerySaverMain">
             <intent-filter>
