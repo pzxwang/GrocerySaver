@@ -23,7 +23,7 @@ public final class DatabaseContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_NOTES = "notes";
         public static final String COLUMN_DATE_ADDED = "dateAdded";
-        public static final String COLUMN_SHELF_LIFE = "shelfLife";
+        public static final String COLUMN_EXPIRATION_DATE = "expirationDate";
     }
 
     public static class Favorite implements BaseColumns {

@@ -17,16 +17,23 @@ import android.util.Log;
  * class. It is registered as a content provider and Android automatically manages it for us.
  * It knows when to open and close the database efficiently.
  *
- * To indirectly interact with this class, from an activity use getContentResolver().
+ * To indirectly use this class, from an activity use getContentResolver().
  *
- * Suppose you want to insert an item to the foodItem table:
+ * Suppose you want to insert an item to the fridgeItem table:
  *
  *      ContentValues values = new ContentValues();
- *      values.put(FoodItem.COLUMN_NAME, "Apple");
- *      values.put(FoodItem.SHELF_LIFE, 26280000);
+ *      values.put(FridgeItem.COLUMN_NAME, "Apple");
+ *      values.put(FridgeItem.COLUMN_DATE_ADDED, 0);
+ *      values.put(FridgeItem.COLUMN_EXPIRATION_DATE, 26280000);
+ *      values.put(FridgeItem.COLUMN_NOTES, "Keeps the doctor away.");
  *      getContentResolver().insert(ProviderContract.uriForTable(FoodItem.TABLE), values));
  *
- * See class DatabaseContract for all the database schema constant definitions.
+ * See class DatabaseContract for all the database schema constant definitions. See the
+ * model/wrapper classes (e.g. FridgeItem and Favorite) for an easier way of inserting
+ * (deleting, updating, etc.) records to the database.
+ *
+ * The content provider is helpful for performing batch CRUD operations, since the model classes
+ * do not offer a way to do them.
  */
 
 public class DataProvider extends ContentProvider {

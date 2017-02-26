@@ -12,7 +12,7 @@ import cse110.grocerysaver.database.DatabaseContract.Favorite;
  * Created by Philip on 2/24/17.
  *
  * This class is for handling database creation and upgrades. It can also be used to interact with
- * the database, but do not use this. This is a lower-level class, see class DataProvider.
+ * the database. Do not use this, see class DataProvider which uses this.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     FridgeItem._ID + " INTEGER PRIMARY KEY," +
                     FridgeItem.COLUMN_NAME + " TEXT," +
                     FridgeItem.COLUMN_DATE_ADDED + " INTEGER," +
-                    FridgeItem.COLUMN_SHELF_LIFE + " INTEGER," +
+                    FridgeItem.COLUMN_EXPIRATION_DATE + " INTEGER," +
                     FridgeItem.COLUMN_NOTES + " TEXT)";
 
     private static final String SQL_CREATE_TABLE_FOOD_ITEM =
