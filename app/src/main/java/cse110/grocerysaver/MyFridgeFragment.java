@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import cse110.grocerysaver.database.DatabaseContract;
+import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.ProviderContract;
 
 public class MyFridgeFragment extends ListFragment
@@ -54,8 +55,7 @@ public class MyFridgeFragment extends ListFragment
             switch (menuItem.getItemId()) {
                 case R.id.menu_my_fridge_remove:
                     for (Long id : adapter.selectedItems) {
-                        Uri uri = ProviderContract.uriForTable(DatabaseContract.FridgeItem.TABLE);
-                        getActivity().getContentResolver().delete(uri, DatabaseContract.FridgeItem._ID + "=" + id, null);
+                        FridgeItem.findByID(getContext(), id.longValue()).delete();
                     }
                     actionMode.finish();
             }
@@ -111,11 +111,11 @@ public class MyFridgeFragment extends ListFragment
             TextView expirationDate = holders.get(tag).expirationDate;
 
             DateFormat format = new SimpleDateFormat("MMM dd");
-            long shelfLife = cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_SHELF_LIFE)) * 1000;
-            long add = (new Date(cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_DATE_ADDED)) * 1000)).getTime();
+            FridgeItem fridgeItem = new FridgeItem(context, cursor);
+            String expirationDateString = format.format(fridgeItem.getExpirationDate().getTime());
 
-            foodName.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_NAME)));
-            expirationDate.setText(format.format(new Date(add + shelfLife)));
+            foodName.setText(fridgeItem.getName());
+            expirationDate.setText(expirationDateString);
 
             checkBox.setTag(Long.valueOf(id));
 
@@ -151,7 +151,7 @@ public class MyFridgeFragment extends ListFragment
             DatabaseContract.FridgeItem._ID,
             DatabaseContract.FridgeItem.COLUMN_NAME,
             DatabaseContract.FridgeItem.COLUMN_DATE_ADDED,
-            DatabaseContract.FridgeItem.COLUMN_SHELF_LIFE
+            DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE
     };
 
     private RowAdapter adapter;
@@ -174,7 +174,6 @@ public class MyFridgeFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        System.out.println(view.getClass().toString() + " " + id);
     }
 
     @Override
@@ -211,7 +210,7 @@ public class MyFridgeFragment extends ListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(
                 getActivity(), ProviderContract.uriForTable(DatabaseContract.FridgeItem.TABLE),
-                COLUMNS, null, null, DatabaseContract.FridgeItem.COLUMN_DATE_ADDED + " DESC"
+                COLUMNS, null, null, DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " DESC"
         );
     }
 
