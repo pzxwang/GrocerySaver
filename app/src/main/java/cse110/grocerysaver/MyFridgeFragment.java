@@ -1,42 +1,160 @@
 package cse110.grocerysaver;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.SparseBooleanArray;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import java.util.HashSet;
 
-import cse110.grocerysaver.database.MyFridgeDataSource;
-import cse110.grocerysaver.database.MyFridgeHelper;
+import cse110.grocerysaver.database.DatabaseContract;
+import cse110.grocerysaver.database.ProviderContract;
 
-import static android.app.Activity.RESULT_OK;
+public class MyFridgeFragment extends ListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
-public class MyFridgeFragment extends Fragment {
+    private ActionMode actionMode = null;
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.my_fridge_select_context, menu);
 
-    /* Request code */
-    static final int NEW_FOOD_ITEM = 1;
+            return true;
+        }
 
-    protected MyFridgeDataSource dataBase;
-    private CustomListViewRowAdapter customAdapter;
-    private ListView myFridgeList;
-    private List<FoodItem> foodList;
-    private EditText newItemName;
-    private EditText newItemNotes;
-    private EditText newItemExpDate;
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.menu_my_fridge_remove:
+                    for (Long id : adapter.selectedItems) {
+                        Uri uri = ProviderContract.uriForTable(DatabaseContract.FridgeItem.TABLE);
+                        getActivity().getContentResolver().delete(uri, DatabaseContract.FridgeItem._ID + "=" + id, null);
+                    }
+                    actionMode.finish();
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            adapter.selectedItems.clear();
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+    static  class ViewHolder {
+        CheckBox checkBox;
+        TextView foodName;
+        TextView expirationDate;
+    }
+
+    private class RowAdapter extends CursorAdapter implements CompoundButton.OnClickListener {
+        HashSet<Long> selectedItems = new HashSet<>();
+        ArrayList<ViewHolder> holders = new ArrayList<>();
+
+        int count = 0;
+
+        public RowAdapter(Context context, Cursor c, int flags) {
+            super(context, c, flags);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View view = LayoutInflater.from(context).inflate(R.layout.adapter_fridge_item_row, parent, false);
+            ViewHolder holder = new ViewHolder();
+
+            holder.checkBox = (CheckBox) view.findViewById(R.id.adapter_fridge_item_row_check_box);
+            holder.foodName = (TextView) view.findViewById(R.id.adapter_fridge_item_row_name);
+            holder.expirationDate = (TextView) view.findViewById(R.id.adapter_fridge_item_row_expiration_date);
+
+            holders.add(holder);
+            view.setTag(count++);
+
+            holder.checkBox.setOnClickListener(this);
+            return view;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            long id = cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem._ID));
+            int tag = (Integer) view.getTag();
+            CheckBox checkBox = holders.get(tag).checkBox;
+            TextView foodName = holders.get(tag).foodName;
+            TextView expirationDate = holders.get(tag).expirationDate;
+
+            DateFormat format = new SimpleDateFormat("MMM dd");
+            long shelfLife = cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_SHELF_LIFE)) * 1000;
+            long add = (new Date(cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_DATE_ADDED)) * 1000)).getTime();
+
+            foodName.setText(cursor.getString(cursor.getColumnIndex(DatabaseContract.FridgeItem.COLUMN_NAME)));
+            expirationDate.setText(format.format(new Date(add + shelfLife)));
+
+            checkBox.setTag(Long.valueOf(id));
+
+            if (selectedItems.contains(id)) {
+                checkBox.setChecked(true);
+            } else {
+                checkBox.setChecked(false);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            CheckBox checkBox = (CheckBox) v;
+            if (checkBox.isChecked()) {
+                selectedItems.add((Long) checkBox.getTag());
+            } else {
+                selectedItems.remove((Long) checkBox.getTag());
+            }
+
+            if (actionMode == null) {
+                actionMode = getActivity().startActionMode(actionModeCallback);
+            }
+
+            if (selectedItems.size() == 0) {
+                actionMode.finish();
+            } else {
+                actionMode.setTitle(String.valueOf(selectedItems.size()));
+            }
+        }
+    }
+
+    private static final String[] COLUMNS = {
+            DatabaseContract.FridgeItem._ID,
+            DatabaseContract.FridgeItem.COLUMN_NAME,
+            DatabaseContract.FridgeItem.COLUMN_DATE_ADDED,
+            DatabaseContract.FridgeItem.COLUMN_SHELF_LIFE
+    };
+
+    private RowAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,16 +164,22 @@ public class MyFridgeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_my_fridge,container,false);
-        dataBase = new MyFridgeDataSource(getActivity());
-        foodList = new ArrayList<>();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        adapter = new RowAdapter(getActivity(), null, 0);
+        setListAdapter(adapter);
 
-        //initialize fridge
-        myFridgeList = (ListView) view.findViewById(R.id.myFridgeList);
-        fetchMyFridge(view);
-        myFridgeList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        System.out.println(view.getClass().toString() + " " + id);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_fridge, container, false);
 
         return view;
     }
@@ -76,79 +200,29 @@ public class MyFridgeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_my_fridge_add:
-                addFood();
-                return true;
-            case R.id.menu_my_fridge_remove:
-                SparseBooleanArray checkedItems = myFridgeList.getCheckedItemPositions();
-
-                for (int i = myFridgeList.getCount()-1; i >= 0; i--) {
-                    if (checkedItems.valueAt(i) == true) {
-                        removeItemFromDb(foodList.get(i).getID());
-                        foodList.remove(foodList.get(i));
-                    }
-                }
-                unSelectItems();
-                customAdapter.notifyDataSetChanged();
+                Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+                getActivity().startActivity(intent);
                 return true;
         }
         return false;
     }
 
-    private void addFood() {
-        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
-        startActivityForResult(intent, NEW_FOOD_ITEM);
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                getActivity(), ProviderContract.uriForTable(DatabaseContract.FridgeItem.TABLE),
+                COLUMNS, null, null, DatabaseContract.FridgeItem.COLUMN_DATE_ADDED + " DESC"
+        );
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == NEW_FOOD_ITEM) {
-            if (resultCode == RESULT_OK) {
-                dataBase.open();
-                String foodName = data.getStringExtra("foodName");
-                String foodExpDate = data.getStringExtra("foodExpDate");
-                String foodNotes = data.getStringExtra("foodNotes");
-
-                FoodItem foodItem = new FoodItem(foodName);
-                foodList.add(foodItem);
-
-                dataBase.insertRow(foodName, foodNotes, 5, 666, foodItem.getID());
-                dataBase.close();
-            }
-        }
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
     }
 
-    public void fetchMyFridge(View view) {
-        dataBase.open();
-        Cursor cursor = dataBase.selectAllAmount();
-        cursor.moveToFirst();
-        while( !cursor.isAfterLast() ) {
-            int namePos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NAME);
-            int idPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_ID);
-            int notesPos = cursor.getColumnIndex(MyFridgeHelper.COLUMN_NOTES);
-
-            // TODO: add in dates for add/exp
-            FoodItem toFetch = new FoodItem(cursor.getString(namePos), cursor.getString(idPos),
-                    cursor.getString(notesPos), 0, 0);
-            foodList.add(toFetch);
-
-            cursor.moveToNext();
-        }
-        dataBase.close();
-        customAdapter = new CustomListViewRowAdapter(getActivity(), foodList);
-        myFridgeList.setAdapter(customAdapter);
-    }
-
-    public void removeItemFromDb(String itemId) {
-        dataBase.open();
-        dataBase.deleteItem(itemId);
-        dataBase.close();
-    }
-
-    //unset any checked items after any action is performed
-    private void unSelectItems() {
-        for (int i = 0; i < myFridgeList.getCount(); i++) {
-            myFridgeList.setItemChecked(i, false);
-        }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 }
 

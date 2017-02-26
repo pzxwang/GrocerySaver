@@ -5,15 +5,6 @@
         android:id="@+id/menu_my_fridge_add"
         app:showAsAction="always" />
 
-    <group>
-        <item android:title="Add to Favorites"
-            android:id="@+id/menu_my_fridge_favorite"
-            app:showAsAction="never" />
-        <item android:title="Remove selected"
-            android:id="@+id/menu_my_fridge_remove"
-            app:showAsAction="never" />
-    </group>
-
     <item android:title="Clean My Fridge"
         android:id="@+id/menu_my_fridge_clean"
         app:showAsAction="never" />

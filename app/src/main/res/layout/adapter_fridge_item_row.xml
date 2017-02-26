@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/listPreferredItemHeight"
+    android:padding="16dp"
+    android:weightSum="10">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/adapter_fridge_item_row_check_box"
+        android:textSize="14sp"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/adapter_fridge_item_row_name"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:layout_weight="8"
+        android:maxLines="1"
+        android:ellipsize="middle"/>
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/adapter_fridge_item_row_expiration_date"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_weight="2"
+        android:gravity="right"/>
+</LinearLayout>
