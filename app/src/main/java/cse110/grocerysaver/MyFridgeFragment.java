@@ -32,6 +32,8 @@ import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.ProviderContract;
 
+import static android.view.LayoutInflater.*;
+
 public class MyFridgeFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -55,7 +57,7 @@ public class MyFridgeFragment extends ListFragment
             switch (menuItem.getItemId()) {
                 case R.id.menu_my_fridge_remove:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem.findByID(getContext(), id.longValue()).delete();
+                        FridgeItem.findByID(getContext(), id).delete();
                     }
                     actionMode.finish();
             }
@@ -82,13 +84,13 @@ public class MyFridgeFragment extends ListFragment
 
         int count = 0;
 
-        public RowAdapter(Context context, Cursor c, int flags) {
+        RowAdapter(Context context, Cursor c, int flags) {
             super(context, c, flags);
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View view = LayoutInflater.from(context).inflate(R.layout.adapter_fridge_item_row, parent, false);
+            View view = from(context).inflate(R.layout.adapter_fridge_item_row, parent, false);
             ViewHolder holder = new ViewHolder();
 
             holder.checkBox = (CheckBox) view.findViewById(R.id.adapter_fridge_item_row_check_box);
@@ -117,7 +119,7 @@ public class MyFridgeFragment extends ListFragment
             foodName.setText(fridgeItem.getName());
             expirationDate.setText(expirationDateString);
 
-            checkBox.setTag(Long.valueOf(id));
+            checkBox.setTag(id);
 
             if (selectedItems.contains(id)) {
                 checkBox.setChecked(true);
@@ -132,7 +134,7 @@ public class MyFridgeFragment extends ListFragment
             if (checkBox.isChecked()) {
                 selectedItems.add((Long) checkBox.getTag());
             } else {
-                selectedItems.remove((Long) checkBox.getTag());
+                selectedItems.remove(checkBox.getTag());
             }
 
             if (actionMode == null) {
@@ -178,9 +180,16 @@ public class MyFridgeFragment extends ListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_my_fridge, container, false);
+        return inflater.inflate(R.layout.fragment_my_fridge, container, false);
+    }
 
-        return view;
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     @Override
