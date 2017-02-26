@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import cse110.grocerysaver.database.DatabaseContract;
+import cse110.grocerysaver.database.Favorite;
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.ProviderContract;
 
@@ -57,9 +58,23 @@ public class MyFridgeFragment extends ListFragment
             switch (menuItem.getItemId()) {
                 case R.id.menu_my_fridge_remove:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem.findByID(getContext(), id).delete();
+                        FridgeItem.findByID(getActivity(), id.longValue()).delete();
                     }
                     actionMode.finish();
+                    return true;
+                case R.id.menu_my_fridge_favorite:
+                    for (Long id : adapter.selectedItems) {
+                        FridgeItem fridgeItem = FridgeItem.findByID(getActivity(), id.longValue());
+                        Favorite favorite = new Favorite(getActivity());
+
+                        favorite.setName(fridgeItem.getName());
+                        favorite.setShelfLife(fridgeItem.getShelfLife());
+                        favorite.setNotes(fridgeItem.getNotes());
+
+                        favorite.insert();
+                    }
+                    actionMode.finish();
+                    return true;
             }
             return false;
         }

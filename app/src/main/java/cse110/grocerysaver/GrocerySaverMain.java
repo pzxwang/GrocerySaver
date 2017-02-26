@@ -23,7 +23,7 @@ public class GrocerySaverMain extends AppCompatActivity implements BottomNavigat
     public PreferencesFragment settingsFragment;
     BottomNavigationView navigationView;
 
-    private LinkedList<MainFragment> fragmentBackStack = new LinkedList<MainFragment>();
+    private LinkedList<MainFragment> fragmentBackStack = new LinkedList<>();
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
