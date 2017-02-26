@@ -151,10 +151,11 @@ public class Favorite {
     }
 
     public String getNotes() {
-        if (notes == null) {
+        if (notes == null && id != NEW_RECORD_CODE) {
             String[] columns = new String[] { DatabaseContract.Favorite.COLUMN_NOTES };
             String[] args = new String[] { id() };
             Cursor cursor = resolver.query(TABLE, columns, ID_SELECTION, args, null);
+            cursor.moveToFirst();
 
             notes = cursor.getString(cursor.getColumnIndex(DatabaseContract.Favorite.COLUMN_NOTES));
             cursor.close();;
@@ -185,5 +186,9 @@ public class Favorite {
 
     public void setShelfLife(long shelfLife) {
         this.shelfLife = shelfLife;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
