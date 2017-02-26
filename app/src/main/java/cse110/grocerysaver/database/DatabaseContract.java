@@ -6,6 +6,11 @@ import cse110.grocerysaver.GrocerySaverMain;
 
 /**
  * Created by Philip on 2/24/17.
+ *
+ * Class DatabaseContract is a namespace for all the constants in the database schema such as
+ * table and column names. Use the constants when interfacing with the database.
+ *
+ * To interact with the database, see class DataProvider.
  */
 
 public final class DatabaseContract {
