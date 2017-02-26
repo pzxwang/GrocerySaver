@@ -1,10 +1,10 @@
 package cse110.grocerysaver;
 
-import android.content.Intent;
+import android.content.ContentValues;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreference;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,13 +14,18 @@ import android.widget.EditText;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import cse110.grocerysaver.database.ProviderContract;
+import cse110.grocerysaver.database.FridgeItem;
 
 public class AddFoodActivity extends AppCompatActivity {
 
     private EditText nameFld;
     private EditText expDateFld;
     private EditText notesFld;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +48,21 @@ public class AddFoodActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_food_done:
-                Intent intent = new Intent();
-                intent.putExtra("foodName", nameFld.getText().toString());
-
-                long inputDate;
+                SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy");
+                Calendar expiration = Calendar.getInstance();
                 try {
-                    inputDate = new SimpleDateFormat("MM / dd / yyyy", Locale.US)
-                                    .parse(expDateFld.getText().toString())
-                                    .getTime();
+                    expiration.setTime(format.parse(expDateFld.getText().toString()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                catch (ParseException e) {
-                    inputDate = 0;
-                }
-                intent.putExtra("foodExpDate", inputDate );
-                intent.putExtra("foodNotes", notesFld.getText().toString());
-                setResult(RESULT_OK, intent);
+
+                FridgeItem fridgeItem = new FridgeItem(this);
+                fridgeItem.setName(nameFld.getText().toString());
+                fridgeItem.setDateAdded(Calendar.getInstance());
+                fridgeItem.setExpirationDate(expiration);
+                fridgeItem.setNotes(notesFld.getText().toString());
+                fridgeItem.insert();
+
                 finish();
         }
         return false;

@@ -8,6 +8,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        
+        <provider
+            android:authorities="com.cse110.GrocerySaver.provider"
+            android:name=".database.DataProvider" />
+        
         <activity android:name=".GrocerySaverMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

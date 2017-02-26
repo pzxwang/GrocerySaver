@@ -54,6 +54,6 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day){
-        expDateField.setText ((month+1) + " / " + day + " / " + year);
+        expDateField.setText ((month+1) + "/" + day + "/" + year);
     }
 }
