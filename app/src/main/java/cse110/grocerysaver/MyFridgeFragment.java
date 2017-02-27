@@ -127,7 +127,7 @@ public class MyFridgeFragment extends ListFragment
             TextView foodName = holders.get(tag).foodName;
             TextView expirationDate = holders.get(tag).expirationDate;
 
-            DateFormat format = new SimpleDateFormat("MMM dd");
+            DateFormat format = new SimpleDateFormat("MMM d");
             FridgeItem fridgeItem = new FridgeItem(context, cursor);
             String expirationDateString = format.format(fridgeItem.getExpirationDate().getTime());
 
@@ -233,7 +233,7 @@ public class MyFridgeFragment extends ListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(
                 getActivity(), ProviderContract.uriForTable(DatabaseContract.FridgeItem.TABLE),
-                COLUMNS, null, null, DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " DESC"
+                COLUMNS, null, null, DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " ASC"
         );
     }
 

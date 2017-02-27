@@ -9,7 +9,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
@@ -21,31 +26,32 @@ public class DatePickerFragment extends DialogFragment
 
         // set the default date to be the one previously entered
         expDateField = (EditText) getActivity().findViewById(R.id.expDateField);
-        int month, day, year;
-        final Calendar currDate = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
 
-        if (!(TextUtils.isEmpty(expDateField.getText().toString()))) {
-            String[] inputDate = expDateField.getText().toString().split(" / ", -1);
-
-            month = Integer.parseInt(inputDate[0]) - 1;
-            day = Integer.parseInt(inputDate[1]);
-            year = Integer.parseInt(inputDate[2]);
-        }
-        else {
-            month = currDate.get(Calendar.MONTH);
-            day = currDate.get(Calendar.DAY_OF_MONTH);
-            year = currDate.get(Calendar.YEAR);
+        String v = expDateField.getText().toString();
+        if (!v.isEmpty()) {
+            DateFormat df = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+            Date date = null;
+            try {
+                date = df.parse(v);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            c.setTimeInMillis(date.getTime());
         }
 
-        DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), this,
+                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         DatePicker picker = dialog.getDatePicker();
+        
+        c = Calendar.getInstance();
 
         // accepted range of dates from next day to one year later
-        currDate.add(Calendar.DATE, 1);
-        picker.setMinDate(currDate.getTimeInMillis());
+        c.add(Calendar.DATE, 1);
+        picker.setMinDate(c.getTimeInMillis());
 
-        currDate.add(Calendar.YEAR, 1);
-        picker.setMaxDate(currDate.getTimeInMillis());
+        c.add(Calendar.YEAR, 1);
+        picker.setMaxDate(c.getTimeInMillis());
 
         // return dialog box
         return dialog;
@@ -53,7 +59,13 @@ public class DatePickerFragment extends DialogFragment
 
     }
 
-    public void onDateSet(DatePicker view, int year, int month, int day){
-        expDateField.setText ((month+1) + "/" + day + "/" + year);
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        DateFormat df = new SimpleDateFormat("MMM d, yyyy");
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);
+
+        expDateField.setText(df.format(c.getTime()));
     }
 }

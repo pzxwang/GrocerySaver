@@ -1,7 +1,5 @@
 package cse110.grocerysaver;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,16 +7,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
-import cse110.grocerysaver.database.ProviderContract;
 import cse110.grocerysaver.database.FridgeItem;
 
 public class AddFoodActivity extends AppCompatActivity {
@@ -35,6 +31,13 @@ public class AddFoodActivity extends AppCompatActivity {
         nameFld = (EditText) findViewById(R.id.nameField);
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        nameFld.requestFocus();
     }
 
     @Override
