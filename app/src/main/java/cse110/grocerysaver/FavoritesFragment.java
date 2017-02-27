@@ -12,6 +12,7 @@ import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -92,9 +93,44 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
         }
     }
 
+    ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.favorites_select_context, menu);
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.menu_favorites_remove:
+                    for (Long id : adapter.selectedItems) {
+                        Favorite.findByID(getActivity(), id).delete();
+                    }
+                    actionMode.finish();
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            adapter.selectedItems.clear();
+            adapter.notifyDataSetChanged();
+        }
+    };
+
     RowAdapter adapter;
     ActionMode actionMode;
-    ActionMode.Callback actionModeCallback;
 
     public FavoritesFragment() { }
 
