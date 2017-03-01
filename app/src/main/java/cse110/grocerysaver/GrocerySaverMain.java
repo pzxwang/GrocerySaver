@@ -3,14 +3,15 @@ package cse110.grocerysaver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import java.util.LinkedList;
+
+import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.PersistableManager;
 
 public class GrocerySaverMain extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 

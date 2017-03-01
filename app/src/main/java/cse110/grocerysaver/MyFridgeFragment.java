@@ -201,6 +201,9 @@ public class MyFridgeFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+        intent.putExtra("EXTRA_FRIDGE_ITEM_ID", id);
+        getActivity().startActivity(intent);
     }
 
     @Override

@@ -12,14 +12,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.PersistableManager;
 
 public class AddFoodActivity extends AppCompatActivity {
+
+    private PersistableManager persistableManager;
+    private FridgeItem fridgeItem = new FridgeItem();
 
     private EditText nameFld;
     private EditText expDateFld;
@@ -30,9 +35,23 @@ public class AddFoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
+        persistableManager = new PersistableManager(this);
+
         nameFld = (EditText) findViewById(R.id.nameField);
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
+
+        Long id = getIntent().getLongExtra("EXTRA_FRIDGE_ITEM_ID", -1);
+        if (id != -1) {
+            setTitle("Edit fridge item");
+            
+            fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
+            DateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+
+            nameFld.setText(fridgeItem.getName());
+            expDateFld.setText(format.format(fridgeItem.getExpirationDate().getTime()));
+            notesFld.setText(fridgeItem.getName());
+        }
     }
 
     @Override
@@ -65,7 +84,6 @@ public class AddFoodActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                FridgeItem fridgeItem = new FridgeItem();
                 fridgeItem.setName(nameFld.getText().toString());
                 fridgeItem.setDateAdded(Calendar.getInstance());
                 fridgeItem.setExpirationDate(expiration);
