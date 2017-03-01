@@ -12,7 +12,7 @@ import cse110.grocerysaver.database.DatabaseContract.Favorite;
  * Created by Philip on 2/24/17.
  *
  * This class is for handling database creation and upgrades. It can also be used to interact with
- * the database. Do not use this, see class DataProvider which uses this.
+ * the database.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {

@@ -23,11 +23,14 @@ import java.util.HashSet;
 
 import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.Favorite;
+import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
 import static android.view.LayoutInflater.from;
 
 public class FavoritesFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    PersistableManager persistableManager;
 
     private class RowAdapter extends CursorAdapter implements View.OnClickListener {
 
@@ -60,7 +63,7 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
             CheckBox checkBox = holders.get(tag).checkBox;
             TextView foodName = holders.get(tag).foodName;
 
-            Favorite favorite = new Favorite(context, cursor);
+            Favorite favorite = (Favorite) persistableManager.initializedPersistable(Favorite.class, cursor);
             foodName.setText(favorite.getName());
 
             checkBox.setTag(id);
@@ -112,9 +115,6 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.menu_favorites_remove:
-                    for (Long id : adapter.selectedItems) {
-                        Favorite.findByID(getActivity(), id).delete();
-                    }
                     actionMode.finish();
                     return true;
             }
@@ -145,6 +145,7 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         adapter = new FavoritesFragment.RowAdapter(getActivity(), null, 0);
+        persistableManager = new PersistableManager(getActivity());
         setListAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);

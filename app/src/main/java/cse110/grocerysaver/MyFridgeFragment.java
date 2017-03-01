@@ -31,12 +31,15 @@ import java.util.HashSet;
 import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.Favorite;
 import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
 import static android.view.LayoutInflater.*;
 
 public class MyFridgeFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    PersistableManager pm;
 
     private ActionMode actionMode = null;
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -58,20 +61,22 @@ public class MyFridgeFragment extends ListFragment
             switch (menuItem.getItemId()) {
                 case R.id.menu_my_fridge_remove:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem.findByID(getActivity(), id.longValue()).delete();
+                        FridgeItem fridgeItem = (FridgeItem) pm.findByID(FridgeItem.class, id);
+
+                        pm.delete(fridgeItem);
                     }
                     actionMode.finish();
                     return true;
                 case R.id.menu_my_fridge_favorite:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem fridgeItem = FridgeItem.findByID(getActivity(), id.longValue());
-                        Favorite favorite = new Favorite(getActivity());
+                        FridgeItem fridgeItem = (FridgeItem) pm.findByID(FridgeItem.class, id);
+                        Favorite favorite = new Favorite();
 
                         favorite.setName(fridgeItem.getName());
                         favorite.setShelfLife(fridgeItem.getShelfLife());
                         favorite.setNotes(fridgeItem.getNotes());
 
-                        favorite.insert();
+                        pm.save(favorite);
                     }
                     actionMode.finish();
                     return true;
@@ -96,6 +101,7 @@ public class MyFridgeFragment extends ListFragment
     private class RowAdapter extends CursorAdapter implements CompoundButton.OnClickListener {
         HashSet<Long> selectedItems = new HashSet<>();
         ArrayList<ViewHolder> holders = new ArrayList<>();
+        DateFormat format = new SimpleDateFormat("MMM d");
 
         int count = 0;
 
@@ -121,22 +127,19 @@ public class MyFridgeFragment extends ListFragment
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            long id = cursor.getLong(cursor.getColumnIndex(DatabaseContract.FridgeItem._ID));
             int tag = (Integer) view.getTag();
             CheckBox checkBox = holders.get(tag).checkBox;
             TextView foodName = holders.get(tag).foodName;
             TextView expirationDate = holders.get(tag).expirationDate;
-
-            DateFormat format = new SimpleDateFormat("MMM d");
-            FridgeItem fridgeItem = new FridgeItem(context, cursor);
+            FridgeItem fridgeItem = (FridgeItem) pm.initializedPersistable(FridgeItem.class, cursor);
             String expirationDateString = format.format(fridgeItem.getExpirationDate().getTime());
 
             foodName.setText(fridgeItem.getName());
             expirationDate.setText(expirationDateString);
 
-            checkBox.setTag(id);
+            checkBox.setTag(fridgeItem.getID());
 
-            if (selectedItems.contains(id)) {
+            if (selectedItems.contains(fridgeItem.getID())) {
                 checkBox.setChecked(true);
             } else {
                 checkBox.setChecked(false);
@@ -184,6 +187,7 @@ public class MyFridgeFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         adapter = new RowAdapter(getActivity(), null, 0);
+        pm = new PersistableManager(getActivity());
         setListAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);

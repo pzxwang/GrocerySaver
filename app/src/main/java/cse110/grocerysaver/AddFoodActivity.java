@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.PersistableManager;
 
 public class AddFoodActivity extends AppCompatActivity {
 
@@ -64,12 +65,14 @@ public class AddFoodActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                FridgeItem fridgeItem = new FridgeItem(this);
+                FridgeItem fridgeItem = new FridgeItem();
                 fridgeItem.setName(nameFld.getText().toString());
                 fridgeItem.setDateAdded(Calendar.getInstance());
                 fridgeItem.setExpirationDate(expiration);
                 fridgeItem.setNotes(notesFld.getText().toString());
-                fridgeItem.insert();
+
+                PersistableManager pm = new PersistableManager(this);
+                pm.save(fridgeItem);
 
                 finish();
         }
