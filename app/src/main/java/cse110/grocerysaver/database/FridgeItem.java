@@ -61,4 +61,8 @@ public class FridgeItem extends Persistable {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public boolean isExpired() {
+        return expirationDate - Calendar.getInstance().getTimeInMillis() <= 0;
+    }
 }
