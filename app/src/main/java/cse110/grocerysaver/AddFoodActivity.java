@@ -44,7 +44,10 @@ public class AddFoodActivity extends AppCompatActivity {
         Long id = getIntent().getLongExtra("EXTRA_FRIDGE_ITEM_ID", -1);
         if (id != -1) {
             setTitle("Edit fridge item");
-            
+
+            findViewById(R.id.remove).setVisibility(View.VISIBLE);
+            findViewById(R.id.favorite).setVisibility(View.VISIBLE);
+
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
             DateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
 
