@@ -1,6 +1,10 @@
 package cse110.grocerysaver;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 
@@ -9,6 +13,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     // Required empty public constructor
     public PreferencesFragment() {}
+
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -21,6 +26,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         getActivity().setTitle(R.string.settings);
     }
+
 }
 
 

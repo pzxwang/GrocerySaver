@@ -2,17 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cse110.grocerysaver">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        
         <provider
-            android:authorities="com.cse110.GrocerySaver.provider"
-            android:name=".database.DataProvider" />
-        
+            android:name=".database.DataProvider"
+            android:authorities="com.cse110.GrocerySaver.provider" />
+
         <activity android:name=".GrocerySaverMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +22,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddFoodActivity"
+
+        <activity
+            android:name=".AddFoodActivity"
             android:label="@string/add_food_activity_title"
             android:parentActivityName=".GrocerySaverMain" />
+
+        <receiver
+            android:name=".notification.DeviceBootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".notification.SendNotificationService"/>
+        <service android:name=".notification.SetRepeatAlarmService"/>
     </application>
 
 </manifest>
