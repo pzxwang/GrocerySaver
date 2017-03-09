@@ -7,26 +7,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.InventoryItem;
 import cse110.grocerysaver.database.PersistableManager;
 
 public class AddFoodActivity extends AppCompatActivity {
 
     private PersistableManager persistableManager;
     private FridgeItem fridgeItem = new FridgeItem();
+    private InventoryItem inventoryItem = new InventoryItem();
 
-    private EditText nameFld;
+    private AutoCompleteTextView nameFld;
     private EditText expDateFld;
     private EditText notesFld;
 
@@ -36,10 +39,15 @@ public class AddFoodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_food);
 
         persistableManager = new PersistableManager(this);
+        ArrayList<String> autoCompleteList = persistableManager.populateInventory(InventoryItem.class);
 
-        nameFld = (EditText) findViewById(R.id.nameField);
+        nameFld = (AutoCompleteTextView) findViewById(R.id.nameField);
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
+
+        ArrayAdapter<String> autoCompleteAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, autoCompleteList);
+        nameFld.setAdapter(autoCompleteAdapter);
 
         Long id = getIntent().getLongExtra("EXTRA_FRIDGE_ITEM_ID", -1);
         if (id != -1) {
@@ -91,6 +99,15 @@ public class AddFoodActivity extends AppCompatActivity {
 
                 PersistableManager pm = new PersistableManager(this);
                 pm.save(fridgeItem);
+
+                // check if item exists in inventory table, add it if not add it
+                boolean inInventory =
+                        pm.isFoodItemInInventoryDb(InventoryItem.class, nameFld.getText().toString());
+
+                if (!inInventory) {
+                    inventoryItem = new InventoryItem(nameFld.getText().toString());
+                    pm.save(inventoryItem);
+                }
 
                 finish();
         }

@@ -15,7 +15,6 @@ import java.util.HashMap;
 import static android.provider.BaseColumns._ID;
 
 /**
- * Created by Philip on 2/27/17.
  *
  * PersistableManager is a thin wrapper for DataProvider. Use it for simple CRUD operations.
  * The following must be satisfied by a class that wants to represent a record from a table
@@ -203,7 +202,7 @@ public class PersistableManager {
         return p;
     }
 
-    public  ArrayList<Persistable> query(Class persistable, String[] col, String sel, String[] args, String order) {
+    public ArrayList<Persistable> query(Class persistable, String[] col, String sel, String[] args, String order) {
         Entity entity = entity(persistable);
         Uri uri = ProviderContract.uriForTable(entity.tableName);
         ArrayList<Persistable> result = new ArrayList<>();
@@ -216,6 +215,7 @@ public class PersistableManager {
         {
             Persistable p = initializedPersistable(persistable, cursor);
             result.add(p);
+            cursor.moveToNext();
         }
         cursor.close();
         return result;
@@ -234,6 +234,33 @@ public class PersistableManager {
         }
 
         return null;
+    }
+
+    // query for options to populate autocomplete
+    public ArrayList<String> populateInventory(Class persistable) {
+        ArrayList<Persistable> results = null;
+        ArrayList<String> autoCompleteOptions = new ArrayList<>();
+
+        results = query(persistable, new String[] {"name"}, null, null, null);
+        for (int i = 0; i < results.size(); i++) {
+            autoCompleteOptions.add(((InventoryItem)results.get(i)).getName());
+        }
+        return autoCompleteOptions;
+    }
+
+    // method to check if a food item is already in inventory table before adding
+    public boolean isFoodItemInInventoryDb(Class persistable, String foodName) {
+        Entity entity = entity(persistable);
+
+        int columnsSize = entity.columnGetMethodMap.keySet().size();
+        String[] projection = entity.columnFieldMap.keySet().toArray(new String[columnsSize]);
+        ArrayList<Persistable> results = null;
+        results = query(persistable, projection, "name = ?", new String[] {foodName}, null);
+
+        if (results.size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     public int save(Persistable... plist) {
