@@ -61,7 +61,7 @@ public class AddFoodActivity extends AppCompatActivity {
 
             nameFld.setText(fridgeItem.getName());
             expDateFld.setText(format.format(fridgeItem.getExpirationDate().getTime()));
-            notesFld.setText(fridgeItem.getName());
+            notesFld.setText(fridgeItem.getNotes());
         }
     }
 
