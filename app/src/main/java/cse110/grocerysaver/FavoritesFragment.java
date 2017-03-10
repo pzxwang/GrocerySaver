@@ -115,6 +115,10 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.menu_favorites_remove:
+                    for (Long id : adapter.selectedItems) {
+                        Favorite favorite = (Favorite) persistableManager.findByID(Favorite.class, id);
+                        persistableManager.delete(favorite);
+                    }
                     actionMode.finish();
                     return true;
             }
