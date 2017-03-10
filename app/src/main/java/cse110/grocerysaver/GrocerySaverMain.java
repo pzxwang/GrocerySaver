@@ -1,8 +1,15 @@
 package cse110.grocerysaver;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,10 +17,10 @@ import android.support.v4.app.FragmentTransaction;
 
 import java.util.LinkedList;
 
-import cse110.grocerysaver.database.FridgeItem;
-import cse110.grocerysaver.database.PersistableManager;
+import cse110.grocerysaver.notification.SendNotificationService;
+import cse110.grocerysaver.notification.SetRepeatAlarmService;
 
-public class GrocerySaverMain extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class GrocerySaverMain extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private enum MainFragment {
         MyFridgeFragment, FavoritesFragment, SettingsFragment
@@ -89,6 +96,14 @@ public class GrocerySaverMain extends AppCompatActivity implements BottomNavigat
         navigationView.setOnNavigationItemSelectedListener(this);
 
         pushFragment(MainFragment.MyFridgeFragment);
+
+        // register onSharedPreferenceChangeListener
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
+
+        //cancelNotification();
+        //Intent myIntent = new Intent(this,SetRepeatAlarmService.class);
+        //this.startService(myIntent);
     }
 
     @NonNull
@@ -112,4 +127,62 @@ public class GrocerySaverMain extends AppCompatActivity implements BottomNavigat
         }
     }
 
+    // this method should handle the change of any preference during the application runtime. Set up
+    // an alarm, or cancel an alarm.
+    // most change need to cancel and reset the alarm, because the alarm is based on period and time
+    // don't need cancel and reset alarm for email notification change, because that is handled in
+    // SendNotificationService
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        Log.d("debug","change happened");
+        // in the case when notification check box is touched
+        if (s.equals("notification_onoff_preference")) {
+            Log.d("debug","notification check box is touched");
+            if(sharedPreferences.getBoolean(s,false)) {
+                Log.d("debug","notification is turned on");
+                startService(new Intent(this, SetRepeatAlarmService.class));
+            }
+            else{
+                Log.d("debug","notification is turned off");
+                cancelNotification();
+            }
+        }
+        // the case notification period is changed
+        else if (s.equals("notify_period_preference")) {
+            Log.d("debug","notification period is touched");
+            Log.d("debug","new period is "+Integer.parseInt(sharedPreferences.getString(s,"")));
+            cancelNotification();
+            startService(new Intent(this, SetRepeatAlarmService.class));
+        }
+        // the case notification time is changed
+        else if (s.equals("notify_time_preference")) {
+            Log.d("debug","notification time is touched");
+            Log.d("debug","new time is "+Integer.parseInt(sharedPreferences.getString(s,"")));
+            cancelNotification();
+            startService(new Intent(this, SetRepeatAlarmService.class));
+        }
+        else if (s.equals("email_onoff_preference")) {
+            Log.d("debug","email notification check box is touched");
+            if (sharedPreferences.getBoolean("email_onoff_preference",false)) {
+                Log.d("debug","email notification is turned on");
+            }
+            else {
+                Log.d("debug","email notification is turned off");
+            }
+        }
+        else if (s.equals("email_address_preference")){
+            Log.d("debug","email address is changed");
+            Log.d("debug","new email address is "+sharedPreferences.getString(s,""));
+
+        }
+
+    }
+
+    //This method may be needed, not sure need to cancel an alarm before start it again
+    public void cancelNotification() {
+        AlarmManager alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent = new Intent(this , SendNotificationService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+        alarmManager.cancel(pendingIntent);
+    }
 }
