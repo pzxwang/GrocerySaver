@@ -55,15 +55,20 @@ public class AddFoodActivity extends AppCompatActivity {
         if (id != -1) {
             setTitle("Edit fridge item");
 
-            findViewById(R.id.remove).setVisibility(View.VISIBLE);
-            findViewById(R.id.favorite).setVisibility(View.VISIBLE);
-
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
             DateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
 
             nameFld.setText(fridgeItem.getName());
             expDateFld.setText(format.format(fridgeItem.getExpirationDate().getTime()));
             notesFld.setText(fridgeItem.getNotes());
+        } else {
+            View buttonPanel = findViewById(R.id.buttonPanel);
+            View fieldsContainer = findViewById(R.id.fieldsContainer);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fieldsContainer.getLayoutParams();
+
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            fieldsContainer.setLayoutParams(params);
+            buttonPanel.setVisibility(View.GONE);
         }
     }
 
