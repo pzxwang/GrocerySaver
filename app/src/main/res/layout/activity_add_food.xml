@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_add_food"
@@ -6,59 +7,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="cse110.grocerysaver.AddFoodActivity"
-    android:padding="16dp"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <AutoCompleteTextView
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Food name"
-        android:layout_weight="0.85"
+    <ScrollView
         android:layout_width="match_parent"
-        android:id="@+id/nameField"
-        android:inputType="text"
-        android:background="@android:color/transparent"
+        android:layout_height="0dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="16dp"
-        android:layout_marginBottom="32dp" />
+        android:layout_above="@+id/buttonPanel">
 
-    <EditText
-        android:background="@android:color/transparent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="none"
-        android:ems="10"
-        android:id="@+id/expDateField"
-        android:hint="Use by date"
-        android:clickable="false"
-        android:focusable="false"
-        android:onClick="showDatePickerDialog"
-        android:layout_below="@+id/nameField"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="16dp"
-        android:layout_marginBottom="32dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
-    <EditText
-        android:background="@android:color/transparent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/notesField"
-        android:hint="Enter notes here"
-        android:layout_weight="0.85"
-        android:layout_below="@+id/expDateField"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="16dp"
-        android:layout_marginBottom="32dp"
-        android:maxLines="5" />
+            <AutoCompleteTextView
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Food name"
+                android:layout_weight="0.85"
+                android:layout_width="match_parent"
+                android:id="@+id/nameField"
+                android:inputType="text"
+                android:background="@android:color/transparent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16dp"
+                android:layout_marginBottom="32dp" />
+
+            <EditText
+                android:background="@android:color/transparent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:ems="10"
+                android:id="@+id/expDateField"
+                android:hint="Use by date"
+                android:clickable="false"
+                android:focusable="false"
+                android:onClick="showDatePickerDialog"
+                android:layout_below="@+id/nameField"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16dp"
+                android:layout_marginBottom="32dp" />
+
+            <EditText
+                android:background="@android:color/transparent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/notesField"
+                android:hint="Enter notes here"
+                android:layout_weight="0.85"
+                android:layout_below="@+id/expDateField"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16dp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
 
     <LinearLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
@@ -72,9 +86,9 @@
             android:text="Remove"
             android:layout_weight="1"
             android:id="@+id/remove"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:backgroundTint="@android:color/holo_red_dark"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/primary_text_light" />
 
         <Button
             android:layout_width="match_parent"
@@ -82,9 +96,9 @@
             android:text="Add to Favorites"
             android:layout_weight="1"
             android:id="@+id/favorite"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:backgroundTint="@android:color/holo_blue_light"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:background="@android:color/holo_blue_light"
+            android:textColor="@android:color/primary_text_light" />
     </LinearLayout>
 
 
