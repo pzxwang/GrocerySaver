@@ -221,6 +221,13 @@ public class PersistableManager {
         return result;
     }
 
+    public int delete(Class persistable, String sel, String[] args) {
+        Entity entity = entity(persistable);
+        Uri uri = ProviderContract.uriForTable(entity.tableName);
+
+        return context.getContentResolver().delete(uri, sel, args);
+    }
+
     public Persistable findByID(Class persistable, long id) {
         Entity entity = entity(persistable);
 
