@@ -3,7 +3,6 @@ package cse110.grocerysaver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -21,11 +20,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashSet;
 
 import cse110.grocerysaver.database.DatabaseContract;
@@ -34,12 +34,14 @@ import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
+import cse110.grocerysaver.Emoji.*;
+
 import static android.view.LayoutInflater.*;
 
 public class MyFridgeFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    PersistableManager pm;
+    PersistableManager persistableManager;
 
     private ActionMode actionMode = null;
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -61,22 +63,22 @@ public class MyFridgeFragment extends ListFragment
             switch (menuItem.getItemId()) {
                 case R.id.menu_my_fridge_remove:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem fridgeItem = (FridgeItem) pm.findByID(FridgeItem.class, id);
+                        FridgeItem fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
 
-                        pm.delete(fridgeItem);
+                        persistableManager.delete(fridgeItem);
                     }
                     actionMode.finish();
                     return true;
                 case R.id.menu_my_fridge_favorite:
                     for (Long id : adapter.selectedItems) {
-                        FridgeItem fridgeItem = (FridgeItem) pm.findByID(FridgeItem.class, id);
+                        FridgeItem fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
                         Favorite favorite = new Favorite();
 
                         favorite.setName(fridgeItem.getName());
                         favorite.setShelfLife(fridgeItem.getShelfLife());
                         favorite.setNotes(fridgeItem.getNotes());
 
-                        pm.save(favorite);
+                        persistableManager.save(favorite);
                     }
                     actionMode.finish();
                     return true;
@@ -131,7 +133,7 @@ public class MyFridgeFragment extends ListFragment
             CheckBox checkBox = holders.get(tag).checkBox;
             TextView foodName = holders.get(tag).foodName;
             TextView expirationDate = holders.get(tag).expirationDate;
-            FridgeItem fridgeItem = (FridgeItem) pm.initializedPersistable(FridgeItem.class, cursor);
+            FridgeItem fridgeItem = (FridgeItem) persistableManager.initializedPersistable(FridgeItem.class, cursor);
             String expirationDateString = format.format(fridgeItem.getExpirationDate().getTime());
 
             foodName.setText(fridgeItem.getName());
@@ -193,7 +195,7 @@ public class MyFridgeFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         adapter = new RowAdapter(getActivity(), null, 0);
-        pm = new PersistableManager(getActivity());
+        persistableManager = new PersistableManager(getActivity());
         setListAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);
@@ -239,6 +241,19 @@ public class MyFridgeFragment extends ListFragment
                 Intent intent = new Intent(getActivity(), AddFoodActivity.class);
                 getActivity().startActivity(intent);
                 return true;
+            case R.id.menu_my_fridge_clean:
+                int num = persistableManager.delete(FridgeItem.class,
+                        DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " <= ?",
+                        new String[] { String.valueOf(Calendar.getInstance().getTimeInMillis()) });
+                if (num == 0) {
+                    Toast.makeText(getActivity(),
+                            "No expired items to remove. " + Emoji.e(0x1F642),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Removed " + num + " expired fridge item" + (num > 1 ? "s" : "") + ". " + Emoji.e(0x1F61E),
+                            Toast.LENGTH_LONG).show();
+                }
         }
         return false;
     }
