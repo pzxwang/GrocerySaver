@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,11 +18,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,10 +43,12 @@ import cse110.grocerysaver.Emoji.*;
 
 import static android.view.LayoutInflater.*;
 
-public class MyFridgeFragment extends ListFragment
+public class MyFridgeFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     PersistableManager persistableManager;
+    ListView listView;
+    TextView emptyView;
 
     private ActionMode actionMode = null;
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -94,7 +101,7 @@ public class MyFridgeFragment extends ListFragment
         }
     };
 
-    static  class ViewHolder {
+    static class ViewHolder {
         CheckBox checkBox;
         TextView foodName;
         TextView expirationDate;
@@ -194,19 +201,32 @@ public class MyFridgeFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         adapter = new RowAdapter(getActivity(), null, 0);
         persistableManager = new PersistableManager(getActivity());
-        setListAdapter(adapter);
+        listView = (ListView) getActivity().findViewById(R.id.list);
+        emptyView = (TextView) getActivity().findViewById(R.id.empty);
 
         getLoaderManager().initLoader(0, null, this);
+        emptyView.setVisibility(View.GONE);
+        emptyView.setText("My Fridge is empty. " + Emoji.e(0x1f610) + "\n\n" + "Add food to start tracking them. " + Emoji.e(0x1f34c));
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+                intent.putExtra("EXTRA_FRIDGE_ITEM_ID", l);
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
-        intent.putExtra("EXTRA_FRIDGE_ITEM_ID", id);
-        getActivity().startActivity(intent);
-    }
+//    @Override
+//    public void onListItemClick(ListView listView, View view, int position, long id) {
+//        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+//        intent.putExtra("EXTRA_FRIDGE_ITEM_ID", id);
+//        getActivity().startActivity(intent);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -268,6 +288,14 @@ public class MyFridgeFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
+
+        if (data.getCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.INVISIBLE);
+        } else {
+            emptyView.setVisibility(View.INVISIBLE);
+            listView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
