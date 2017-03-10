@@ -8,7 +8,7 @@
     tools:context="cse110.grocerysaver.AddFoodActivity"
     android:padding="16dp">
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Food name"

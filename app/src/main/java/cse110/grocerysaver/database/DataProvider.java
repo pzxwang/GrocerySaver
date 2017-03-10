@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Philip on 2/24/17.
  *
  * This class is used for interacting with the database. Do not directly create an instance of this
  * class. It is registered as a content provider and Android automatically manages it for us.
@@ -25,9 +24,12 @@ public class DataProvider extends ContentProvider {
     static private final int FRIDGE_ITEM = 1;
     static private final int FAVORITE = 2;
     static private final int FOOD_ITEM = 3;
-    static private final int FRIDGE_ITEM_ID = 4;
-    static private final int FAVORITE_ID = 5;
-    static private final int FOOD_ITEM_ID = 6;
+    static private final int INVENTORY_ITEM = 4;
+
+    static private final int FRIDGE_ITEM_ID = 5;
+    static private final int FAVORITE_ID = 6;
+    static private final int FOOD_ITEM_ID = 7;
+    static private final int INVENTORY_ITEM_ID = 8;
 
     static private final String TYPE_ITEM = "vnd.android.cursor.item/";
     static private final String TYPE_DIR = "vnd.android.cursor.dir/";
@@ -38,9 +40,12 @@ public class DataProvider extends ContentProvider {
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FridgeItem.TABLE, FRIDGE_ITEM);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.Favorite.TABLE, FAVORITE);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FoodItem.TABLE, FOOD_ITEM);
+        uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.InventoryItem.TABLE, INVENTORY_ITEM);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FridgeItem.TABLE + "/#", FRIDGE_ITEM_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.Favorite.TABLE + "/#", FAVORITE_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FoodItem.TABLE + "/#", FOOD_ITEM_ID);
+        uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.InventoryItem.TABLE + "/#", INVENTORY_ITEM_ID);
+
     }
 
     private DatabaseHelper dbHelper;
@@ -63,6 +68,9 @@ public class DataProvider extends ContentProvider {
                 break;
             case FOOD_ITEM:
                 table = DatabaseContract.FoodItem.TABLE;
+                break;
+            case INVENTORY_ITEM:
+                table = DatabaseContract.InventoryItem.TABLE;
                 break;
         }
         return table;
@@ -95,6 +103,8 @@ public class DataProvider extends ContentProvider {
                 return TYPE_DIR + ProviderContract.AUTHORITY + "." + DatabaseContract.Favorite.TABLE;
             case FOOD_ITEM:
                 return TYPE_DIR + ProviderContract.AUTHORITY + "." + DatabaseContract.FoodItem.TABLE;
+            case INVENTORY_ITEM:
+                return TYPE_DIR + ProviderContract.AUTHORITY + "." + DatabaseContract.InventoryItem.TABLE;
 
             case FRIDGE_ITEM_ID:
                 return TYPE_ITEM + ProviderContract.AUTHORITY + "." + DatabaseContract.FridgeItem.TABLE;
@@ -102,6 +112,8 @@ public class DataProvider extends ContentProvider {
                 return TYPE_ITEM + ProviderContract.AUTHORITY + "." + DatabaseContract.Favorite.TABLE;
             case FOOD_ITEM_ID:
                 return TYPE_ITEM + ProviderContract.AUTHORITY + "." + DatabaseContract.FoodItem.TABLE;
+            case INVENTORY_ITEM_ID:
+                return TYPE_ITEM + ProviderContract.AUTHORITY + "." + DatabaseContract.InventoryItem.TABLE;
             default:
                 return null;
         }

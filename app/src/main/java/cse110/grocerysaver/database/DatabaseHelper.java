@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import cse110.grocerysaver.database.DatabaseContract.FridgeItem;
 import cse110.grocerysaver.database.DatabaseContract.FoodItem;
 import cse110.grocerysaver.database.DatabaseContract.Favorite;
+import cse110.grocerysaver.database.DatabaseContract.InventoryItem;
 
 /**
- * Created by Philip on 2/24/17.
  *
  * This class is for handling database creation and upgrades. It can also be used to interact with
  * the database.
@@ -41,6 +41,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     Favorite.COLUMN_SHELF_LIFE + " INTEGER," +
                     Favorite.COLUMN_NOTES + " TEXT)";
 
+    private static final String SQL_CREATE_TABLE_INVENTORY_ITEM =
+            "CREATE TABLE " + InventoryItem.TABLE + " (" +
+                    InventoryItem._ID + " INTEGER PRIMARY KEY," +
+                    InventoryItem.COLUMN_NAME + " TEXT)";
+
     private static final String SQL_DROP_TABLE_FRIDGE_ITEM =
             "DROP TABLE IF EXISTS " + FridgeItem.TABLE;
 
@@ -49,6 +54,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DROP_TABLE_FAVORITE =
             "DROP TABLE IF EXISTS " + Favorite.TABLE;
+
+    private static final String SQL_DROP_TABLE_INVENTORY_ITEM =
+            "DROP TABLE IF EXISTS " + InventoryItem.TABLE;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_FRIDGE_ITEM);
         db.execSQL(SQL_CREATE_TABLE_FAVORITE);
         db.execSQL(SQL_CREATE_TABLE_FOOD_ITEM);
+        db.execSQL(SQL_CREATE_TABLE_INVENTORY_ITEM);
     }
 
     @Override
@@ -66,6 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROP_TABLE_FRIDGE_ITEM);
         db.execSQL(SQL_DROP_TABLE_FOOD_ITEM);
         db.execSQL(SQL_DROP_TABLE_FAVORITE);
+        db.execSQL(SQL_DROP_TABLE_INVENTORY_ITEM);
         onCreate(db);
     }
 }
