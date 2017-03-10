@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -45,6 +46,7 @@ public class AddFoodActivity extends AppCompatActivity {
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
 
+
         ArrayAdapter<String> autoCompleteAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, autoCompleteList);
         nameFld.setAdapter(autoCompleteAdapter);
@@ -68,8 +70,6 @@ public class AddFoodActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        nameFld.requestFocus();
     }
 
     @Override

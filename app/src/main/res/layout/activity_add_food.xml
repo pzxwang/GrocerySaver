@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="cse110.grocerysaver.AddFoodActivity"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <AutoCompleteTextView
         android:layout_height="wrap_content"
