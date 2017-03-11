@@ -149,9 +149,9 @@ public class MyFridgeFragment extends Fragment
             checkBox.setTag(fridgeItem.getID());
 
             if (fridgeItem.isExpired()) {
-                view.setBackgroundColor(0x11d74d3e);
+                view.setBackgroundResource(R.color.colorExpired);
             } else {
-                view.setBackgroundColor(0x119cef49);
+                view.setBackgroundResource(R.color.colorNotExpired);
             }
 
             if (selectedItems.contains(fridgeItem.getID())) {
