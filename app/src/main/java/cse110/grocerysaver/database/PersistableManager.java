@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -155,7 +156,7 @@ public class PersistableManager {
     }
 
     /* setPersistableID() sets the ID field of an instance of a Persistable. */
-    public void setPersistableID(Persistable p, long id) {
+    private void setPersistableID(Persistable p, long id) {
         Entity entity = entity(p.getClass());
         Field f = entity.columnFieldMap.get(_ID);
 
@@ -233,8 +234,7 @@ public class PersistableManager {
 
         int columnsSize = entity.columnGetMethodMap.keySet().size();
         String[] projection = entity.columnFieldMap.keySet().toArray(new String[columnsSize]);
-        ArrayList<Persistable> results = null;
-        results = query(persistable, projection, _ID + " = ?", new String[] { String.valueOf(id) }, null);
+        ArrayList<Persistable> results = query(persistable, projection, _ID + " = ?", new String[] { String.valueOf(id) }, null);
 
         if (results.size() == 1) {
             return results.get(0);
