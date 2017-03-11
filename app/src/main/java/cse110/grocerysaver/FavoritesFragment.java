@@ -1,6 +1,7 @@
 package cse110.grocerysaver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -201,6 +202,17 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.favorites, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_favorites_add:
+                Intent intent = new Intent(getActivity(), AddFavoriteActivity.class);
+                getActivity().startActivity(intent);
+                return true;
+        }
+        return false;
     }
 
     @Override
