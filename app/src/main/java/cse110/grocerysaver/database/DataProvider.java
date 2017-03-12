@@ -42,7 +42,6 @@ public class DataProvider extends ContentProvider {
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.FridgeItem.TABLE + "/#", FRIDGE_ITEM_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.Favorite.TABLE + "/#", FAVORITE_ID);
         uriMatcher.addURI(ProviderContract.AUTHORITY, DatabaseContract.InventoryItem.TABLE + "/#", INVENTORY_ITEM_ID);
-
     }
 
     private DatabaseHelper dbHelper;

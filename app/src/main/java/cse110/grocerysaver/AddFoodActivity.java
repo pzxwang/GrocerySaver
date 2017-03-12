@@ -1,9 +1,12 @@
 package cse110.grocerysaver;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,7 +15,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.Favorite;
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.InventoryItem;
@@ -48,24 +54,50 @@ public class AddFoodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_food);
 
         persistableManager = new PersistableManager(this);
-        ArrayList<InventoryItem> autoCompleteList = persistableManager.populateInventory(InventoryItem.class);
 
         nameFld = (AutoCompleteTextView) findViewById(R.id.nameField);
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
 
-        format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+        SimpleCursorAdapter autoCompleteAdapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_dropdown_item_1line,
+                null,
+                new String[] { DatabaseContract.InventoryItem.COLUMN_NAME },
+                new int[] { android.R.id.text1 },
+                0);
 
-        ArrayAdapter<InventoryItem> autoCompleteAdapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, autoCompleteList);
+        autoCompleteAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+            @Override
+            public Cursor runQuery(CharSequence charSequence) {
+                String[] columns = {
+                        DatabaseContract.InventoryItem._ID,
+                        DatabaseContract.InventoryItem.COLUMN_NAME,
+                        DatabaseContract.InventoryItem.COLUMN_SHELF_LIFE
+                };
+
+                String sel = DatabaseContract.InventoryItem.COLUMN_NAME + " LIKE ? ";
+                String[] args = new String[] { "%" + charSequence + "%" };
+                return persistableManager.cursor(InventoryItem.class, columns, sel, args, null);
+            }
+        });
+
+        autoCompleteAdapter.setCursorToStringConverter(new SimpleCursorAdapter.CursorToStringConverter() {
+            @Override
+            public CharSequence convertToString(Cursor cursor) {
+                int index = cursor.getColumnIndex(DatabaseContract.InventoryItem.COLUMN_NAME);
+                return cursor.getString(index);
+            }
+        });
+
         nameFld.setAdapter(autoCompleteAdapter);
 
         nameFld.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                InventoryItem selected = (InventoryItem) parent.getAdapter().getItem(position);
+                InventoryItem selected = (InventoryItem) persistableManager.findByID(InventoryItem.class, id);
+
                 nameFld.setText(selected.getName());
-                expDateFld.setText(format.format(selected.getExpirationDate().getTime()));
+                expDateFld.setText(selected.getFormattedExpirationDate(Calendar.getInstance()));
             }
         });
 
@@ -76,7 +108,7 @@ public class AddFoodActivity extends AppCompatActivity {
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
 
             nameFld.setText(fridgeItem.getName());
-            expDateFld.setText(format.format(fridgeItem.getExpirationDate().getTime()));
+            expDateFld.setText(fridgeItem.getFormattedExpirationDate());
             notesFld.setText(fridgeItem.getNotes());
         } else {
             View buttonPanel = findViewById(R.id.buttonPanel);

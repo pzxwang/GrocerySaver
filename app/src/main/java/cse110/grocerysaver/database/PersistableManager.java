@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -203,13 +204,16 @@ public class PersistableManager {
         return p;
     }
 
-    public ArrayList<Persistable> query(Class persistable, String[] col, String sel, String[] args, String order) {
+    public Cursor cursor(Class persistable, String[] col, String sel, String[] args, String order) {
         Entity entity = entity(persistable);
         Uri uri = ProviderContract.uriForTable(entity.tableName);
+
+        return context.getContentResolver().query(uri, col, sel, args, order);
+    }
+
+    public ArrayList<Persistable> query(Class persistable, String[] col, String sel, String[] args, String order) {
         ArrayList<Persistable> result = new ArrayList<>();
-        Cursor cursor = context.
-                getContentResolver().
-                query(uri, col, sel, args, order);
+        Cursor cursor = cursor(persistable, col, sel, args, order);
 
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++)
