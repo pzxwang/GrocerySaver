@@ -13,6 +13,7 @@ import cse110.grocerysaver.GrocerySaverMain;
  */
 
 public final class DatabaseContract {
+
     private DatabaseContract() {};
 
     public static class InventoryItem implements BaseColumns {
@@ -42,12 +43,4 @@ public final class DatabaseContract {
         public static final String COLUMN_SHELF_LIFE = "shelfLife";
     }
 
-    /* TODO: Populate with produce and their shelf life... */
-    public static class FoodItem implements BaseColumns {
-        private  FoodItem() {};
-
-        public static final String TABLE = "foodItem";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_SHELF_LIFE = "shelfLife";
-    }
 }

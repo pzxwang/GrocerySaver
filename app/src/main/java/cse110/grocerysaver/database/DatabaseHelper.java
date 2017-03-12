@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import cse110.grocerysaver.database.DatabaseContract.FridgeItem;
-import cse110.grocerysaver.database.DatabaseContract.FoodItem;
 import cse110.grocerysaver.database.DatabaseContract.Favorite;
 import cse110.grocerysaver.database.DatabaseContract.InventoryItem;
 
@@ -35,12 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     FridgeItem.COLUMN_EXPIRATION_DATE + " LONG," +
                     FridgeItem.COLUMN_NOTES + " TEXT)";
 
-    private static final String SQL_CREATE_TABLE_FOOD_ITEM =
-            "CREATE TABLE " + FoodItem.TABLE + " (" +
-                    FoodItem._ID + " INTEGER PRIMARY KEY," +
-                    FoodItem.COLUMN_NAME + " TEXT," +
-                    FoodItem.COLUMN_SHELF_LIFE + " LONG)";
-
     private static final String SQL_CREATE_TABLE_FAVORITE =
             "CREATE TABLE " + Favorite.TABLE + " (" +
                     Favorite._ID + " INTEGER PRIMARY KEY," +
@@ -56,9 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_DROP_TABLE_FRIDGE_ITEM =
             "DROP TABLE IF EXISTS " + FridgeItem.TABLE;
-
-    private static final String SQL_DROP_TABLE_FOOD_ITEM =
-            "DROP TABLE IF EXISTS " + FoodItem.TABLE;
 
     private static final String SQL_DROP_TABLE_FAVORITE =
             "DROP TABLE IF EXISTS " + Favorite.TABLE;
@@ -79,7 +69,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE_FRIDGE_ITEM);
         db.execSQL(SQL_CREATE_TABLE_FAVORITE);
-        db.execSQL(SQL_CREATE_TABLE_FOOD_ITEM);
         db.execSQL(SQL_CREATE_TABLE_INVENTORY_ITEM);
         try {
             InputStream in =  context.getAssets().open(INV_FILENAME);
@@ -195,7 +184,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL(SQL_DROP_TABLE_FRIDGE_ITEM);
-        db.execSQL(SQL_DROP_TABLE_FOOD_ITEM);
         db.execSQL(SQL_DROP_TABLE_FAVORITE);
         db.execSQL(SQL_DROP_TABLE_INVENTORY_ITEM);
         onCreate(db);
