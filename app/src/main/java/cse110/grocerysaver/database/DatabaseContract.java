@@ -20,6 +20,7 @@ public final class DatabaseContract {
 
         public static final String TABLE = "inventoryItem";
         public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_SHELF_LIFE = "shelfLife";
     }
 
     public static class FridgeItem implements BaseColumns {

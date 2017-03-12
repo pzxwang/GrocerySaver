@@ -50,7 +50,7 @@ public class DatePickerFragment extends DialogFragment
         c.add(Calendar.DATE, 1);
         picker.setMinDate(c.getTimeInMillis());
 
-        c.add(Calendar.YEAR, 1);
+        c.add(Calendar.YEAR, 5);
         picker.setMaxDate(c.getTimeInMillis());
 
         // return dialog box

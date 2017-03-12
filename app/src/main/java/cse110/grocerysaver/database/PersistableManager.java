@@ -244,15 +244,18 @@ public class PersistableManager {
     }
 
     // query for options to populate autocomplete
-    public ArrayList<String> populateInventory(Class persistable) {
-        ArrayList<Persistable> results = null;
-        ArrayList<String> autoCompleteOptions = new ArrayList<>();
+    public ArrayList<InventoryItem> populateInventory(Class persistable) {
 
-        results = query(persistable, new String[] {"name"}, null, null, null);
-        for (int i = 0; i < results.size(); i++) {
-            autoCompleteOptions.add(((InventoryItem)results.get(i)).getName());
+        ArrayList<Persistable> results = null;
+        ArrayList<InventoryItem> list = new ArrayList<InventoryItem>();
+        results = query(persistable, new String[] {DatabaseContract.InventoryItem.COLUMN_NAME,
+                        DatabaseContract.InventoryItem.COLUMN_SHELF_LIFE}, null, null, null);
+
+        for (Persistable result : results) {
+            list.add((InventoryItem) result);
         }
-        return autoCompleteOptions;
+        return list;
+
     }
 
     // method to check if a food item is already in inventory table before adding

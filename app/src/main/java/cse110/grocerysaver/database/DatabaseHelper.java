@@ -31,27 +31,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + FridgeItem.TABLE + " (" +
                     FridgeItem._ID + " INTEGER PRIMARY KEY," +
                     FridgeItem.COLUMN_NAME + " TEXT," +
-                    FridgeItem.COLUMN_DATE_ADDED + " INTEGER," +
-                    FridgeItem.COLUMN_EXPIRATION_DATE + " INTEGER," +
+                    FridgeItem.COLUMN_DATE_ADDED + " LONG," +
+                    FridgeItem.COLUMN_EXPIRATION_DATE + " LONG," +
                     FridgeItem.COLUMN_NOTES + " TEXT)";
 
     private static final String SQL_CREATE_TABLE_FOOD_ITEM =
             "CREATE TABLE " + FoodItem.TABLE + " (" +
                     FoodItem._ID + " INTEGER PRIMARY KEY," +
                     FoodItem.COLUMN_NAME + " TEXT," +
-                    FoodItem.COLUMN_SHELF_LIFE + " INTEGER)";
+                    FoodItem.COLUMN_SHELF_LIFE + " LONG)";
 
     private static final String SQL_CREATE_TABLE_FAVORITE =
             "CREATE TABLE " + Favorite.TABLE + " (" +
                     Favorite._ID + " INTEGER PRIMARY KEY," +
                     Favorite.COLUMN_NAME + " TEXT," +
-                    Favorite.COLUMN_SHELF_LIFE + " INTEGER," +
+                    Favorite.COLUMN_SHELF_LIFE + " LONG," +
                     Favorite.COLUMN_NOTES + " TEXT)";
 
     private static final String SQL_CREATE_TABLE_INVENTORY_ITEM =
             "CREATE TABLE " + InventoryItem.TABLE + " (" +
                     InventoryItem._ID + " INTEGER PRIMARY KEY," +
-                    InventoryItem.COLUMN_NAME + " TEXT UNIQUE)";
+                    InventoryItem.COLUMN_NAME + " TEXT UNIQUE," +
+                    InventoryItem.COLUMN_SHELF_LIFE + " LONG)";
 
     private static final String SQL_DROP_TABLE_FRIDGE_ITEM =
             "DROP TABLE IF EXISTS " + FridgeItem.TABLE;
@@ -168,9 +169,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         }
 
                         // insert one item per type/storage combination (if exists)
-                        // TODO: add expTime to inventory table -> insert shelf life
                         ContentValues values = new ContentValues();
                         values.put(InventoryItem.COLUMN_NAME, invName);
+                        values.put(InventoryItem.COLUMN_SHELF_LIFE, shelfLife);
 
                         /*
                          * Duplicates possible d/t imperfect scraping and time ranges

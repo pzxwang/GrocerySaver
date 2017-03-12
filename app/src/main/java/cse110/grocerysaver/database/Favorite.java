@@ -13,6 +13,7 @@ import java.util.Calendar;
  */
 
 public class Favorite extends Persistable {
+
     private String name;
     private Long shelfLife;
     private String notes;

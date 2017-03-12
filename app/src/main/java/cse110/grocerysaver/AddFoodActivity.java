@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import java.util.Locale;
 
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.InventoryItem;
+import cse110.grocerysaver.database.Persistable;
 import cse110.grocerysaver.database.PersistableManager;
 
 public class AddFoodActivity extends AppCompatActivity {
@@ -34,29 +36,40 @@ public class AddFoodActivity extends AppCompatActivity {
     private EditText expDateFld;
     private EditText notesFld;
 
+    SimpleDateFormat format;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
         persistableManager = new PersistableManager(this);
-        ArrayList<String> autoCompleteList = persistableManager.populateInventory(InventoryItem.class);
+        ArrayList<InventoryItem> autoCompleteList = persistableManager.populateInventory(InventoryItem.class);
 
         nameFld = (AutoCompleteTextView) findViewById(R.id.nameField);
         expDateFld = (EditText) findViewById(R.id.expDateField);
         notesFld = (EditText) findViewById(R.id.notesField);
 
+        format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
 
-        ArrayAdapter<String> autoCompleteAdapter =
+        ArrayAdapter<InventoryItem> autoCompleteAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, autoCompleteList);
         nameFld.setAdapter(autoCompleteAdapter);
+
+        nameFld.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                InventoryItem selected = (InventoryItem) parent.getAdapter().getItem(position);
+                nameFld.setText(selected.getName());
+                expDateFld.setText(format.format(selected.getExpirationDate().getTime()));
+            }
+        });
 
         Long id = getIntent().getLongExtra("EXTRA_FRIDGE_ITEM_ID", -1);
         if (id != -1) {
             setTitle("Edit fridge item");
 
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
-            DateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
 
             nameFld.setText(fridgeItem.getName());
             expDateFld.setText(format.format(fridgeItem.getExpirationDate().getTime()));
@@ -92,7 +105,7 @@ public class AddFoodActivity extends AppCompatActivity {
                     return false;
                 }
 
-                SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+
                 Calendar expiration = Calendar.getInstance();
                 try {
                     expiration.setTime(format.parse(expDateFld.getText().toString()));
@@ -113,7 +126,12 @@ public class AddFoodActivity extends AppCompatActivity {
                         pm.isFoodItemInInventoryDb(InventoryItem.class, nameFld.getText().toString());
 
                 if (!inInventory) {
-                    inventoryItem = new InventoryItem(nameFld.getText().toString());
+                    inventoryItem = new InventoryItem();
+                    inventoryItem.setName(nameFld.getText().toString());
+
+                    long shelfLife = expiration.getTimeInMillis() - System.currentTimeMillis();
+                    inventoryItem.setShelfLife(shelfLife);
+
                     pm.save(inventoryItem);
                 }
 
