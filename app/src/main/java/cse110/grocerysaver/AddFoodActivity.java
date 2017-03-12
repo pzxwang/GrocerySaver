@@ -1,5 +1,6 @@
 package cse110.grocerysaver;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,12 +22,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import cse110.grocerysaver.database.Favorite;
 import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.InventoryItem;
 import cse110.grocerysaver.database.Persistable;
 import cse110.grocerysaver.database.PersistableManager;
 
 public class AddFoodActivity extends AppCompatActivity {
+
+    public final static String EXTRA_FRIDGE_ITEM_ID = "EXTRA_FRIDGE_ITEM_ID";
 
     private PersistableManager persistableManager;
     private FridgeItem fridgeItem = new FridgeItem();
@@ -65,8 +69,8 @@ public class AddFoodActivity extends AppCompatActivity {
             }
         });
 
-        Long id = getIntent().getLongExtra("EXTRA_FRIDGE_ITEM_ID", -1);
-        if (id != -1) {
+        Long id = getIntent().getLongExtra(EXTRA_FRIDGE_ITEM_ID, Persistable.NEW_RECORD);
+        if (id != Persistable.NEW_RECORD) {
             setTitle("Edit fridge item");
 
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
@@ -94,6 +98,7 @@ public class AddFoodActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_food, menu);
+
         return true;
     }
 
@@ -104,7 +109,6 @@ public class AddFoodActivity extends AppCompatActivity {
                 if (!isDataValid()) {
                     return false;
                 }
-
 
                 Calendar expiration = Calendar.getInstance();
                 try {
@@ -118,12 +122,11 @@ public class AddFoodActivity extends AppCompatActivity {
                 fridgeItem.setExpirationDate(expiration);
                 fridgeItem.setNotes(notesFld.getText().toString());
 
-                PersistableManager pm = new PersistableManager(this);
-                pm.save(fridgeItem);
+                persistableManager.save(fridgeItem);
 
                 // check if item exists in inventory table, add it if not add it
                 boolean inInventory =
-                        pm.isFoodItemInInventoryDb(InventoryItem.class, nameFld.getText().toString());
+                        persistableManager.isFoodItemInInventoryDb(InventoryItem.class, nameFld.getText().toString());
 
                 if (!inInventory) {
                     inventoryItem = new InventoryItem();
@@ -132,7 +135,7 @@ public class AddFoodActivity extends AppCompatActivity {
                     long shelfLife = expiration.getTimeInMillis() - System.currentTimeMillis();
                     inventoryItem.setShelfLife(shelfLife);
 
-                    pm.save(inventoryItem);
+                    persistableManager.save(inventoryItem);
                 }
 
                 finish();
@@ -145,23 +148,42 @@ public class AddFoodActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    private boolean validateFoodName() {
-        return nameFld.getText().toString().isEmpty();
+    public void removeFridgeItem(View v) {
+        Long id = getIntent().getLongExtra(EXTRA_FRIDGE_ITEM_ID, Persistable.NEW_RECORD);
+        FridgeItem f = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
+
+        persistableManager.delete(f);
+
+        Toast.makeText(this, "Fridge item removed. " + Emoji.e(0x1f636), Toast.LENGTH_SHORT).show();
+
+        finish();
     }
 
-    private  boolean validateExpirationDate() {
-        return expDateFld.getText().toString().isEmpty();
+    public void addToFavorites(View v) {
+        Long id = getIntent().getLongExtra(EXTRA_FRIDGE_ITEM_ID, Persistable.NEW_RECORD);
+        FridgeItem fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
+        Favorite favorite  = new Favorite();
+
+        favorite.setName(fridgeItem.getName());
+        favorite.setShelfLife(fridgeItem.getShelfLife());
+        favorite.setNotes(fridgeItem.getNotes());
+
+        persistableManager.save(favorite);
+
+        Toast.makeText(this, "Fridge item added to Favorites. " + Emoji.e(0x1f60b), Toast.LENGTH_SHORT).show();
+
+        finish();
     }
 
     private boolean isDataValid() {
         if (nameFld.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please enter food name.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter food name. " + Emoji.e(0x1f613), Toast.LENGTH_SHORT).show();
 
             return false;
         }
 
         if (expDateFld.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please enter an expiration date.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter an expiration date. " + Emoji.e(0x1f613), Toast.LENGTH_SHORT).show();
 
             return false;
         }

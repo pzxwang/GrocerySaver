@@ -87,8 +87,7 @@
             android:text="Remove"
             android:layout_weight="1"
             android:id="@+id/remove"
-            android:background="@android:color/holo_red_dark"
-            android:textColor="@android:color/primary_text_light" />
+            android:onClick="removeFridgeItem"/>
 
         <Button
             android:layout_width="match_parent"
@@ -96,8 +95,7 @@
             android:text="Add to Favorites"
             android:layout_weight="1"
             android:id="@+id/favorite"
-            android:background="@android:color/holo_blue_light"
-            android:textColor="@android:color/primary_text_light" />
+            android:onClick="addToFavorites"/>
     </LinearLayout>
 
 
