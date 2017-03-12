@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TABLE_INVENTORY_ITEM =
             "CREATE TABLE " + InventoryItem.TABLE + " (" +
                     InventoryItem._ID + " INTEGER PRIMARY KEY," +
-                    InventoryItem.COLUMN_NAME + " TEXT)";
+                    InventoryItem.COLUMN_NAME + " TEXT UNIQUE)";
 
     private static final String SQL_DROP_TABLE_FRIDGE_ITEM =
             "DROP TABLE IF EXISTS " + FridgeItem.TABLE;
@@ -95,16 +95,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // first array records first object that begins with certain letter
             reader.beginObject();
+            reader.nextName();
             reader.skipValue();
 
             // second array contains actual data
             // format: {name: string, fullname: string, expiry: array}
+            reader.nextName();
             reader.beginArray();
             while (reader.hasNext()) {
                 reader.beginObject();
-
+                String foodName = "";
                 while (reader.hasNext()) {
-                    String foodName = "";
 
                     String name = reader.nextName();
 
@@ -131,8 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private void readExpiry(SQLiteDatabase db, JsonReader reader, String foodName) throws IOException {
 
-        // TODO: add expTime to inventory table -> insert shelf life
-        long shelfLife = 0;
+
         reader.beginArray();
 
         while (reader.hasNext()) {
@@ -142,6 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             reader.beginObject();
             while (reader.hasNext()) {
                 String expName = reader.nextName();
+
                 if (expName.equals("type")) {
                     String type = reader.nextString();
 
@@ -154,7 +155,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
                 else {
                     long expDays = reader.nextLong();
-                    shelfLife = expDays * DateUtils.DAY_IN_MILLIS;
+                    long shelfLife = expDays * DateUtils.DAY_IN_MILLIS;
                     if (expDays > 0) {
                         if (expName.equals("refrigerator")) {
                             invName = foodName + " (refrigerator) ";
@@ -167,6 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         }
 
                         // insert one item per type/storage combination (if exists)
+                        // TODO: add expTime to inventory table -> insert shelf life
                         ContentValues values = new ContentValues();
                         values.put(InventoryItem.COLUMN_NAME, invName);
 
