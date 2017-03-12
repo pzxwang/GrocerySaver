@@ -43,7 +43,6 @@ public class AddFavoriteActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_food, menu);
-        setTitle("Add Favorite");
         return true;
     }
 
