@@ -4,6 +4,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -14,6 +17,8 @@ import android.provider.ContactsContract;
  */
 
 public class FridgeItem extends Persistable {
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d");
 
     private String name;
     private Long dateAdded;
@@ -42,8 +47,12 @@ public class FridgeItem extends Persistable {
         return notes;
     }
 
-    public long getShelfLife() {
+    public Long getShelfLife() {
         return expirationDate - dateAdded;
+    }
+
+    public String getFormattedExpirationDate() {
+        return DATE_FORMAT.format(expirationDate);
     }
 
     public void setName(String name) {

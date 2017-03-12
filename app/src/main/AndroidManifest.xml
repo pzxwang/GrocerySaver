@@ -23,9 +23,12 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".AddFoodActivity"
+        <activity android:name=".AddFoodActivity"
             android:label="@string/add_food_activity_title"
+            android:parentActivityName=".GrocerySaverMain" />
+
+        <activity android:name=".AddFavoriteActivity"
+            android:label="Add favorite"
             android:parentActivityName=".GrocerySaverMain" />
 
         <receiver

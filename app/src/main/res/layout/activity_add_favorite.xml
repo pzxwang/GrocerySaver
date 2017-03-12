@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_add_favorite"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="cse110.grocerysaver.AddFavoriteActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <ScrollView
+        android:id="@+id/favFieldsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/buttonPanel">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <AutoCompleteTextView
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Favorite name"
+                android:layout_weight="0.85"
+                android:layout_width="match_parent"
+                android:id="@+id/favNameField"
+                android:inputType="text"
+                android:background="@android:color/transparent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16dp"
+                android:layout_marginBottom="32dp" />
+
+            <EditText
+                android:id="@+id/shelfLifeField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/favNameField"
+                android:layout_marginBottom="32dp"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="Shelf life"
+                android:inputType="number"
+                android:textSize="16dp" />
+
+            <EditText
+                android:background="@android:color/transparent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/favNotesField"
+                android:hint="Enter notes here"
+                android:layout_weight="0.85"
+                android:layout_below="@+id/shelfLifeField"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="16dp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+    </LinearLayout>
+
+
+</RelativeLayout>
