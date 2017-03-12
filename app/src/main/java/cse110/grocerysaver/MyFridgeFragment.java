@@ -214,19 +214,14 @@ public class MyFridgeFragment extends Fragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), AddFoodActivity.class);
-                intent.putExtra("EXTRA_FRIDGE_ITEM_ID", l);
-                getActivity().startActivity(intent);
+                if (actionMode == null) {
+                    Intent intent = new Intent(getActivity(), AddFoodActivity.class);
+                    intent.putExtra("EXTRA_FRIDGE_ITEM_ID", l);
+                    getActivity().startActivity(intent);
+                }
             }
         });
     }
-
-//    @Override
-//    public void onListItemClick(ListView listView, View view, int position, long id) {
-//        Intent intent = new Intent(getActivity(), AddFoodActivity.class);
-//        intent.putExtra("EXTRA_FRIDGE_ITEM_ID", id);
-//        getActivity().startActivity(intent);
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
