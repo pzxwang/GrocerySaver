@@ -1,6 +1,7 @@
 package cse110.grocerysaver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -19,10 +20,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 
 import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.Favorite;
+import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
@@ -121,6 +124,25 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
                     }
                     actionMode.finish();
                     return true;
+                case R.id.menu_favorites_refrigerate:
+                    for (Long id : adapter.selectedItems) {
+
+                        Favorite favorite = (Favorite) persistableManager.findByID(Favorite.class, id);
+                        FridgeItem fridgeItem = new FridgeItem();
+
+                        Calendar newExpDate = Calendar.getInstance();
+                        newExpDate.setTimeInMillis(
+                                System.currentTimeMillis() + favorite.getShelfLife());
+
+                        fridgeItem.setName(favorite.getName());
+                        fridgeItem.setNotes(favorite.getNotes());
+                        fridgeItem.setDateAdded(Calendar.getInstance());
+                        fridgeItem.setExpirationDate(newExpDate);
+
+                        persistableManager.save(fridgeItem);
+                    }
+                    actionMode.finish();
+                    return true;
             }
             return false;
         }
@@ -180,6 +202,17 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.favorites, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_favorites_add:
+                Intent intent = new Intent(getActivity(), AddFavoriteActivity.class);
+                getActivity().startActivity(intent);
+                return true;
+        }
+        return false;
     }
 
     @Override

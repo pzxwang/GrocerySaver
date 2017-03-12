@@ -33,21 +33,7 @@ public class Favorite extends Persistable {
         return name;
     }
 
-    public int getShelfLife(TimeUnit unit) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(shelfLife);
-
-        switch(unit) {
-            case DAY:
-                return c.get(Calendar.DAY_OF_MONTH) - 1;
-            case MONTH:
-                return c.get(Calendar.MONTH);
-            case WEEK:
-                return (c.get(Calendar.DAY_OF_MONTH) - 1) / 7;
-        }
-
-        return -1;
-    }
+    public long getShelfLife() { return shelfLife; }
 
     public String getNotes() {
         return notes;
