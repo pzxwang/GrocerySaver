@@ -3,6 +3,7 @@ package cse110.grocerysaver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,8 +46,6 @@ public class AddFoodActivity extends AppCompatActivity {
     private AutoCompleteTextView nameFld;
     private EditText expDateFld;
     private EditText notesFld;
-
-    SimpleDateFormat format;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +143,7 @@ public class AddFoodActivity extends AppCompatActivity {
 
                 Calendar expiration = Calendar.getInstance();
                 try {
-                    expiration.setTime(format.parse(expDateFld.getText().toString()));
+                    expiration.setTime(InventoryItem.format.parse(expDateFld.getText().toString()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
