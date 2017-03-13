@@ -85,27 +85,30 @@ public class SendNotificationService extends IntentService {
         // if need to send email, send.
         if (sharedPref.getBoolean("email_onoff_preference",false)) {
             final String emailAddress = sharedPref.getString("email_address_preference","");
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        String list = "";
-                        for ( Persistable item : fridgeItems) {
-                            list = list + ((FridgeItem) item).getName() + "\n";
+            // only when the emailAddress is not equal to empty string will the email notification send
+            if (!(emailAddress.equals(""))) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            String list = "";
+                            for ( Persistable item : fridgeItems) {
+                                list = list + ((FridgeItem) item).getName() + "\n";
+                            }
+
+                            GMailSender sender = new GMailSender(
+                                    "xuzepei19950617@gmail.com",
+                                    "Xzp8587668067!");
+
+                            sender.sendMail("My Fridge notification", contentText + ":\n" + list,
+                                    "GrocerySaver",
+                                    emailAddress);
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(),"Error", Toast.LENGTH_LONG).show();
                         }
-
-                        GMailSender sender = new GMailSender(
-                                "xuzepei19950617@gmail.com",
-                                "Xzp8587668067!");
-
-                        sender.sendMail("My Fridge notification", contentText + ":\n" + list,
-                                "GrocerySaver",
-                                emailAddress);
-
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(),"Error", Toast.LENGTH_LONG).show();
                     }
-                }
-            }).start();
+                }).start();
+            }
         }
     }
 }

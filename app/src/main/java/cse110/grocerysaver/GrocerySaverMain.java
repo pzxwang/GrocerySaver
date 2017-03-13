@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 
@@ -151,20 +152,27 @@ public class GrocerySaverMain extends AppCompatActivity implements BottomNavigat
         else if (s.equals("notify_period_preference")) {
             Log.d("debug","notification period is touched");
             Log.d("debug","new period is "+Integer.parseInt(sharedPreferences.getString(s,"")));
-            cancelNotification();
-            startService(new Intent(this, SetRepeatAlarmService.class));
+            if(sharedPreferences.getBoolean("notification_onoff_preference",false)) {
+                cancelNotification();
+                startService(new Intent(this, SetRepeatAlarmService.class));
+            }
         }
         // the case notification time is changed
         else if (s.equals("notify_time_preference")) {
             Log.d("debug","notification time is touched");
             Log.d("debug","new time is "+Integer.parseInt(sharedPreferences.getString(s,"")));
-            cancelNotification();
-            startService(new Intent(this, SetRepeatAlarmService.class));
+            if(sharedPreferences.getBoolean("notification_onoff_preference",false)){
+                cancelNotification();
+                startService(new Intent(this, SetRepeatAlarmService.class));
+            }
         }
         else if (s.equals("email_onoff_preference")) {
             Log.d("debug","email notification check box is touched");
             if (sharedPreferences.getBoolean("email_onoff_preference",false)) {
                 Log.d("debug","email notification is turned on");
+                if(sharedPreferences.getString("email_address_preference","").equals("")){
+                    Toast.makeText(getApplicationContext(),"Please enter a valid email address", Toast.LENGTH_LONG).show();
+                }
             }
             else {
                 Log.d("debug","email notification is turned off");
@@ -173,7 +181,10 @@ public class GrocerySaverMain extends AppCompatActivity implements BottomNavigat
         else if (s.equals("email_address_preference")){
             Log.d("debug","email address is changed");
             Log.d("debug","new email address is "+sharedPreferences.getString(s,""));
-
+            if(sharedPreferences.getString("email_address_preference","").equals("")){
+                Toast.makeText(getApplicationContext(),"Email address cannot be empty", Toast.LENGTH_LONG).show();
+            }
+            Toast.makeText(getApplicationContext(),"Email address updated", Toast.LENGTH_LONG).show();
         }
 
     }
