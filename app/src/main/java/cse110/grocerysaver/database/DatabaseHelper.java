@@ -127,6 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         while (reader.hasNext()) {
             String invName = foodName;
+            String invNameTyped = "";
 
             // format: {type: string, refrigerator: days, pantry: days, freezer: days}
             reader.beginObject();
@@ -137,24 +138,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String type = reader.nextString();
 
                     if (type.equals("refContainer")) {
-                        invName = foodName + " (container) ";
+                        invName += " (container) ";
                     }
-                    else if (!type.equals("default") && !type.equals("frozen")) {
-                        invName = foodName + " (" + type + ") ";
+                    else if (!(type.equals("default")) && !(type.equals("frozen"))) {
+                        invName += " (" + type + ") ";
                     }
+                    invNameTyped = invName;
                 }
                 else {
                     long expDays = reader.nextLong();
                     long shelfLife = expDays * DateUtils.DAY_IN_MILLIS;
                     if (expDays > 0) {
                         if (expName.equals("refrigerator")) {
-                            invName = foodName + " (refrigerator) ";
+                            invName += " (refrigerator) ";
                         }
                         else if (expName.equals("pantry")) {
-                            invName = foodName + " (pantry) ";
+                            invName += " (pantry) ";
                         }
                         else if (expName.equals("freezer")) {
-                            invName = foodName +" (freezer) ";
+                            invName += " (freezer) ";
                         }
 
                         // insert one item per type/storage combination (if exists)
@@ -168,10 +170,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                          *      {type: default, refrigerator: 10, pantry: 60, freezer: -1}
                          *
                          * so just insert latest
+                         * (to insert earliest, use CONFLICT_IGNORE)
                          */
                         db.insertWithOnConflict(InventoryItem.TABLE, null, values,
                                 SQLiteDatabase.CONFLICT_REPLACE);
 
+                        invName = invNameTyped;
                     }
                 }
 

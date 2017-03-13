@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,11 +30,14 @@ import cse110.grocerysaver.database.FridgeItem;
 import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
+import cse110.grocerysaver.Emoji.*;
+
 import static android.view.LayoutInflater.from;
 
 public class FavoritesFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     PersistableManager persistableManager;
+    TextView emptyView;
 
     private class RowAdapter extends CursorAdapter implements View.OnClickListener {
 
@@ -122,6 +126,9 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
                         Favorite favorite = (Favorite) persistableManager.findByID(Favorite.class, id);
                         persistableManager.delete(favorite);
                     }
+
+                    Toast.makeText(getActivity().getApplicationContext(), "Items have been deleted",
+                            Toast.LENGTH_SHORT).show();
                     actionMode.finish();
                     return true;
                 case R.id.menu_favorites_refrigerate:
@@ -141,6 +148,9 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
 
                         persistableManager.save(fridgeItem);
                     }
+
+                    Toast.makeText(getActivity().getApplicationContext(), "Items have been added to My Fridge",
+                            Toast.LENGTH_SHORT).show();
                     actionMode.finish();
                     return true;
             }
@@ -175,6 +185,7 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
         setListAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override

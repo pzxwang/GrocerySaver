@@ -23,49 +23,50 @@
             android:padding="16dp">
 
             <AutoCompleteTextView
+                android:id="@+id/nameField"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="32dp"
+                android:layout_weight="0.85"
+                android:background="@android:color/transparent"
                 android:ems="10"
                 android:hint="Food name"
-                android:layout_weight="0.85"
-                android:layout_width="match_parent"
-                android:id="@+id/nameField"
                 android:inputType="text"
-                android:background="@android:color/transparent"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:textSize="16dp"
-                android:layout_marginBottom="32dp" />
+                android:textSize="16dp" />
 
             <EditText
-                android:background="@android:color/transparent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:ems="10"
                 android:id="@+id/expDateField"
-                android:hint="Use by date"
-                android:clickable="false"
-                android:focusable="false"
-                android:onClick="showDatePickerDialog"
-                android:layout_below="@+id/nameField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:textSize="16dp"
-                android:layout_marginBottom="32dp" />
-
-            <EditText
-                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:ems="10"
-                android:id="@+id/notesField"
-                android:hint="Enter notes here"
-                android:layout_weight="0.85"
-                android:layout_below="@+id/expDateField"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_below="@+id/nameField"
+                android:layout_marginBottom="32dp"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:ems="10"
+                android:focusable="false"
+                android:hint="Use by date"
+                android:inputType="none"
+                android:onClick="showDatePickerDialog"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/notesField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/expDateField"
+                android:layout_weight="0.85"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="Enter notes here"
+                android:inputType="textMultiLine"
+                android:singleLine="false"
                 android:textSize="16dp" />
 
         </RelativeLayout>
@@ -89,13 +90,6 @@
             android:id="@+id/remove"
             android:onClick="removeFridgeItem"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add to Favorites"
-            android:layout_weight="1"
-            android:id="@+id/favorite"
-            android:onClick="addToFavorites"/>
     </LinearLayout>
 
 

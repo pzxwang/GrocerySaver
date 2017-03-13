@@ -14,23 +14,24 @@
         android:layout_alignParentStart="true">
 
         <TextView
-            android:text="TextView"
+            android:id="@+id/adapter_fridge_item_row_expiration_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/adapter_fridge_item_row_expiration_date"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:text="TextView"
+            android:id="@+id/adapter_fridge_item_row_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/adapter_fridge_item_row_name"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:singleLine="false"
+            android:text="TextView"
             android:textColor="#000"
-            android:maxLines="1"
-            android:ellipsize="middle"/>
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

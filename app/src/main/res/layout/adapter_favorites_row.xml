@@ -12,15 +12,16 @@
         android:textSize="18sp" />
 
     <TextView
+        android:id="@+id/adapter_favorites_row_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/adapter_favorites_row_name"
-        android:text="foodName"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
         android:layout_alignBaseline="@+id/adapter_favorites_row_check_box"
         android:layout_toLeftOf="@+id/adapter_favorites_row_check_box"
-        android:layout_toStartOf="@+id/adapter_favorites_row_check_box" />
+        android:layout_toStartOf="@+id/adapter_favorites_row_check_box"
+        android:text="foodName"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
