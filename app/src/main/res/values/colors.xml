@@ -7,4 +7,5 @@
     <color name="colorBackground">#DDDDDD</color>
     <color name="colorExpired">#F9EDED</color>
     <color name="colorNotExpired">#F1FCEB</color>
+    <color name="colorAboutToExpire">#FEFAE5</color>
 </resources>

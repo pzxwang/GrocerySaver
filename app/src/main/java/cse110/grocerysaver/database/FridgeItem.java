@@ -76,4 +76,11 @@ public class FridgeItem extends Persistable {
     public boolean isExpired() {
         return expirationDate - Calendar.getInstance().getTimeInMillis() <= 0;
     }
+
+    public boolean isAboutToExpire() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 3);
+
+        return expirationDate < c.getTimeInMillis();
+    }
 }

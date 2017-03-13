@@ -169,6 +169,8 @@ public class MyFridgeFragment extends Fragment
 
             if (fridgeItem.isExpired()) {
                 view.setBackgroundResource(R.color.colorExpired);
+            } else if (fridgeItem.isAboutToExpire()) {
+                view.setBackgroundResource(R.color.colorAboutToExpire);
             } else {
                 view.setBackgroundResource(R.color.colorNotExpired);
             }
