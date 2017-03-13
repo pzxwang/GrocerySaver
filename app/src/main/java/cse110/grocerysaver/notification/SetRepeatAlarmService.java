@@ -45,7 +45,8 @@ public class SetRepeatAlarmService extends IntentService {
 
         // setInexactRepeating
         AlarmManager alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), FREQUENCY_IN_DAYS*AlarmManager.INTERVAL_DAY , pendingIntent);
+        // TODO: the repeating interval is not set for demo only, remember to change it to real functionalities
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES/5 , pendingIntent);
         Log.d("debug","the repeating is set at "+calendar.getTimeInMillis()+" every "+FREQUENCY_IN_DAYS+" days");
     }
 }

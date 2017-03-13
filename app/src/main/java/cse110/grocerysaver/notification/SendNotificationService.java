@@ -102,6 +102,7 @@ public class SendNotificationService extends IntentService {
                             sender.sendMail("My Fridge notification", contentText + ":\n" + list,
                                     "GrocerySaver",
                                     emailAddress);
+                            Log.d("debug","Sending an email");
 
                         } catch (Exception e) {
                             Toast.makeText(getApplicationContext(),"Error", Toast.LENGTH_LONG).show();

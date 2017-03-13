@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,7 +17,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +37,11 @@ import cse110.grocerysaver.Emoji.*;
 
 import static android.view.LayoutInflater.from;
 
-public class FavoritesFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     PersistableManager persistableManager;
+
+    ListView listView;
     TextView emptyView;
 
     private class RowAdapter extends CursorAdapter implements View.OnClickListener {
@@ -182,10 +187,16 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
         super.onActivityCreated(savedInstanceState);
         adapter = new FavoritesFragment.RowAdapter(getActivity(), null, 0);
         persistableManager = new PersistableManager(getActivity());
-        setListAdapter(adapter);
+
+        listView = (ListView) getActivity().findViewById(R.id.list);
+        emptyView = (TextView) getActivity().findViewById(R.id.empty);
+
+        listView.setAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);
-
+        emptyView.setVisibility(View.GONE);
+        emptyView.setText("Favorites is empty. " + Emoji.e(0x1f610) + "\n\n" + "Add food from here or My Fridge. " + Emoji.e(0x1f34c));
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -238,6 +249,14 @@ public class FavoritesFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
+
+        if (data.getCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.INVISIBLE);
+        } else {
+            emptyView.setVisibility(View.INVISIBLE);
+            listView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
