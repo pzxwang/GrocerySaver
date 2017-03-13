@@ -6,11 +6,20 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import cse110.grocerysaver.GrocerySaverMain;
 import cse110.grocerysaver.R;
+import cse110.grocerysaver.database.DatabaseContract;
+import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.Persistable;
+import cse110.grocerysaver.database.PersistableManager;
 
 
 public class SendNotificationService extends IntentService {
@@ -24,14 +33,42 @@ public class SendNotificationService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 3);
+
+        String[] col = new String[]{
+                DatabaseContract.FridgeItem.COLUMN_NAME,
+                DatabaseContract.FridgeItem.COLUMN_DATE_ADDED,
+                DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE
+        };
+        String sel = DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " > ? AND " +
+                DatabaseContract.FridgeItem.COLUMN_EXPIRATION_DATE + " < ? ";
+        String[] args = new String[]{
+                String.valueOf(Calendar.getInstance().getTimeInMillis()),
+                String.valueOf(c.getTimeInMillis())
+        };
+
+        PersistableManager persistableManager = new PersistableManager(this);
+        final ArrayList<Persistable> fridgeItems = persistableManager.query(FridgeItem.class, col, sel, args, null);
+
+        if (fridgeItems.isEmpty()) {
+            return;
+        }
+
         SharedPreferences sharedPref = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
+        final String contentText;
+        if (fridgeItems.size() == 1) {
+            contentText = "1 item is about to expire.";
+        } else {
+            contentText = fridgeItems.size() + " items are about to expire.";
+        }
         // below are nothing but a simple notification
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.noun_864097_cc)
-                        .setContentTitle("Food is expiring!!!")
-                        .setContentText("Following food is expring: ...");
+                        .setContentTitle("My Fridge")
+                        .setContentText(contentText);
         // TODO: need to include some expiring items in the notification
 
         Intent resultIntent = new Intent(this, GrocerySaverMain.class);
@@ -51,11 +88,16 @@ public class SendNotificationService extends IntentService {
             new Thread(new Runnable() {
                 public void run() {
                     try {
+                        String list = "";
+                        for ( Persistable item : fridgeItems) {
+                            list = list + ((FridgeItem) item).getName() + "\n";
+                        }
+
                         GMailSender sender = new GMailSender(
                                 "xuzepei19950617@gmail.com",
                                 "Xzp8587668067!");
 
-                        sender.sendMail("Your Food Is Expiring!!!", "The following food is expiring soon: "+"",
+                        sender.sendMail("My Fridge notification", contentText + ":\n" + list,
                                 "GrocerySaver",
                                 emailAddress);
 

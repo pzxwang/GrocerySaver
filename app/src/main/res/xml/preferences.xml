@@ -2,36 +2,34 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <PreferenceCategory
-        android:title="Notification Preferences">
-
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:key="notification_onoff_preference"
-            android:title="Notifications On/Off"/>
+            android:title="Notifications"
+            android:defaultValue="" />
 
         <EditTextPreference
             android:key="notify_period_preference"
-            android:title="# Days between notifs"
+            android:title="Period"
+            android:summary="Set the number of days between the notifications."
+            android:defaultValue="1"
             android:dependency="notification_onoff_preference"/>
 
         <EditTextPreference
             android:key="notify_time_preference"
-            android:title="Time of Day for Notif"
-            android:dependency="notification_onoff_preference"/>
-    </PreferenceCategory>
+            android:title="Time"
+            android:dependency="notification_onoff_preference"
+            android:summary="Set the time of day when you want to be notified."
+            android:defaultValue="12"/>
 
-    <PreferenceCategory
-        android:title="Email Preferences">
-
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:key="email_onoff_preference"
-            android:title="Email Notifications On/Off"
-            android:dependency="notification_onoff_preference"/>
+            android:title="Email notifications"
+            android:dependency="notification_onoff_preference"
+            android:summary="Be notified by email." />
 
         <EditTextPreference
             android:key="email_address_preference"
-            android:title="Email Address"
+            android:title="Email address"
             android:dependency="email_onoff_preference" />
-    </PreferenceCategory>
 
 </PreferenceScreen>
