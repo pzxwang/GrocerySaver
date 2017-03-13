@@ -193,17 +193,22 @@ public class AddFoodActivity extends AppCompatActivity {
     public void addToFavorites(View v) {
         Long id = getIntent().getLongExtra(EXTRA_FRIDGE_ITEM_ID, Persistable.NEW_RECORD);
         FridgeItem fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
-        Favorite favorite  = new Favorite();
 
-        favorite.setName(fridgeItem.getName());
-        favorite.setShelfLife(fridgeItem.getShelfLife());
-        favorite.setNotes(fridgeItem.getNotes());
+        if (MyFridgeFragment.isFridgeItemFavorited(persistableManager, fridgeItem)) {
+            Toast.makeText(this, "This item is already in your Favorites. " + Emoji.e(0x1f60b), Toast.LENGTH_SHORT).show();
+        } else {
+            Favorite favorite  = new Favorite();
 
-        persistableManager.save(favorite);
+            favorite.setName(fridgeItem.getName());
+            favorite.setShelfLife(fridgeItem.getShelfLife());
+            favorite.setNotes(fridgeItem.getNotes());
 
-        Toast.makeText(this, "Fridge item added to Favorites. " + Emoji.e(0x1f60b), Toast.LENGTH_SHORT).show();
+            persistableManager.save(favorite);
 
-        finish();
+            Toast.makeText(this, "Fridge item added to Favorites. " + Emoji.e(0x1f60b), Toast.LENGTH_SHORT).show();
+
+            finish();
+        }
     }
 
     private boolean isDataValid() {

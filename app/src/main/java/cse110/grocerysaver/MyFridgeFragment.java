@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import cse110.grocerysaver.database.DatabaseContract;
 import cse110.grocerysaver.database.Favorite;
 import cse110.grocerysaver.database.FridgeItem;
+import cse110.grocerysaver.database.Persistable;
 import cse110.grocerysaver.database.PersistableManager;
 import cse110.grocerysaver.database.ProviderContract;
 
@@ -49,6 +51,20 @@ public class MyFridgeFragment extends Fragment
     PersistableManager persistableManager;
     ListView listView;
     TextView emptyView;
+
+    public static boolean isFridgeItemFavorited(PersistableManager persistableManager, FridgeItem fridgeItem) {
+        String[] col = new String[] {
+                DatabaseContract.Favorite.COLUMN_NAME
+        };
+        String sel = DatabaseContract.Favorite.COLUMN_NAME + " = ? ";
+        String[] args = {
+                fridgeItem.getName()
+        };
+
+        ArrayList<Persistable> favorites = persistableManager.query(Favorite.class, col, sel, args, null);
+
+        return favorites.size() == 1;
+    }
 
     private ActionMode actionMode = null;
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -79,13 +95,16 @@ public class MyFridgeFragment extends Fragment
                 case R.id.menu_my_fridge_favorite:
                     for (Long id : adapter.selectedItems) {
                         FridgeItem fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
-                        Favorite favorite = new Favorite();
 
-                        favorite.setName(fridgeItem.getName());
-                        favorite.setShelfLife(fridgeItem.getShelfLife());
-                        favorite.setNotes(fridgeItem.getNotes());
+                        if (!isFridgeItemFavorited(persistableManager, fridgeItem)) {
+                            Favorite favorite = new Favorite();
 
-                        persistableManager.save(favorite);
+                            favorite.setName(fridgeItem.getName());
+                            favorite.setShelfLife(fridgeItem.getShelfLife());
+                            favorite.setNotes(fridgeItem.getNotes());
+
+                            persistableManager.save(favorite);
+                        }
                     }
                     actionMode.finish();
                     return true;
