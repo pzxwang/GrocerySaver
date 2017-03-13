@@ -169,6 +169,14 @@ public class AddFoodActivity extends AppCompatActivity {
                     persistableManager.save(inventoryItem);
                 }
 
+                Long id = getIntent().getLongExtra(EXTRA_FRIDGE_ITEM_ID, Persistable.NEW_RECORD);
+                if (id != Persistable.NEW_RECORD) {
+                    Toast.makeText(getApplicationContext(), "Item has been edited", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Item has been added", Toast.LENGTH_SHORT).show();
+                }
+
                 finish();
         }
         return false;

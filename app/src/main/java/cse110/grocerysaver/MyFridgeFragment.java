@@ -90,6 +90,8 @@ public class MyFridgeFragment extends Fragment
 
                         persistableManager.delete(fridgeItem);
                     }
+                    Toast.makeText(getActivity().getApplicationContext(), "Items have been deleted",
+                            Toast.LENGTH_SHORT).show();
                     actionMode.finish();
                     return true;
                 case R.id.menu_my_fridge_favorite:
@@ -106,6 +108,9 @@ public class MyFridgeFragment extends Fragment
                             persistableManager.save(favorite);
                         }
                     }
+
+                    Toast.makeText(getActivity().getApplicationContext(), "Items have been added to Favorites",
+                            Toast.LENGTH_SHORT).show();
                     actionMode.finish();
                     return true;
             }
@@ -129,7 +134,7 @@ public class MyFridgeFragment extends Fragment
     private class RowAdapter extends CursorAdapter implements CompoundButton.OnClickListener {
         HashSet<Long> selectedItems = new HashSet<>();
         ArrayList<ViewHolder> holders = new ArrayList<>();
-        DateFormat format = new SimpleDateFormat("MMM d");
+        DateFormat format = new SimpleDateFormat("MMM d YYYY");
 
         int count = 0;
 
