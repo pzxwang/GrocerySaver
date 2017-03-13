@@ -40,7 +40,7 @@ public class SetRepeatAlarmService extends IntentService {
         // set up the time of notification
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, TIME_OF_DAY);
-        calendar.set(Calendar.MINUTE, 32);
+        calendar.set(Calendar.MINUTE, 00);
         calendar.set(Calendar.SECOND, 00);
 
         // setInexactRepeating

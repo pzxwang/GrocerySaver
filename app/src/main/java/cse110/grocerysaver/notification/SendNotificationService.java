@@ -59,9 +59,9 @@ public class SendNotificationService extends IntentService {
 
         final String contentText;
         if (fridgeItems.size() == 1) {
-            contentText = "1 item is about to expire.";
+            contentText = "1 item is about to expire";
         } else {
-            contentText = fridgeItems.size() + " items are about to expire.";
+            contentText = fridgeItems.size() + " items are about to expire";
         }
         // below are nothing but a simple notification
         NotificationCompat.Builder mBuilder =
@@ -80,7 +80,7 @@ public class SendNotificationService extends IntentService {
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(0, mBuilder.build());
-        Log.d("debug","pushing notification");
+        Log.d("debug","pushing notification at "+Calendar.getInstance().getTimeInMillis());
 
         // if need to send email, send.
         if (sharedPref.getBoolean("email_onoff_preference",false)) {
