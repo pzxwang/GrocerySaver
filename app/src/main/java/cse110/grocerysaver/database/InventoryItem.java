@@ -10,7 +10,7 @@ import java.util.Locale;
 /* Used to keep track of every food item ever inputted for autocomplete on text input */
 public class InventoryItem extends Persistable {
 
-    public static final SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+    public static final SimpleDateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
     private String name;
     private Long shelfLife;

@@ -8,6 +8,8 @@ import android.database.Cursor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+
 import android.net.Uri;
 import android.provider.ContactsContract;
 
@@ -51,8 +53,8 @@ public class FridgeItem extends Persistable {
         return expirationDate - dateAdded;
     }
 
-    public String getFormattedExpirationDate() {
-        return DATE_FORMAT.format(expirationDate);
+    public String getFormattedExpirationDate(String format) {
+        return (new SimpleDateFormat(format, Locale.ENGLISH)).format(expirationDate);
     }
 
     public void setName(String name) {

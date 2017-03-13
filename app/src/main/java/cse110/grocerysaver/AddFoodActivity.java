@@ -107,7 +107,7 @@ public class AddFoodActivity extends AppCompatActivity {
             fridgeItem = (FridgeItem) persistableManager.findByID(FridgeItem.class, id);
 
             nameFld.setText(fridgeItem.getName());
-            expDateFld.setText(fridgeItem.getFormattedExpirationDate());
+            expDateFld.setText(fridgeItem.getFormattedExpirationDate("MMM d, yyyy"));
             notesFld.setText(fridgeItem.getNotes());
         } else {
             View buttonPanel = findViewById(R.id.buttonPanel);
