@@ -3,7 +3,7 @@
     <item
         android:id="@+id/menu_fridge"
         android:title="@string/my_fridge"
-        android:icon="@android:drawable/sym_def_app_icon" />
+        android:icon="@drawable/noun_864097_cc" />
     <item
         android:id="@+id/menu_favorites"
         android:title="@string/favorites"
